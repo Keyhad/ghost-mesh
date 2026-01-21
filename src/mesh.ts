@@ -5,10 +5,10 @@
 
 import noble from '@abandonware/noble';
 import { EventEmitter } from 'events';
-import { 
-  Message, 
-  serializeMessage, 
-  deserializeMessage, 
+import {
+  Message,
+  serializeMessage,
+  deserializeMessage,
   phoneNumberMatches,
   MAX_HOPS,
   generateMessageId
@@ -66,7 +66,7 @@ export class MeshNode extends EventEmitter {
     this.seenMessages.add(message.id);
     this.broadcastMessage(message);
     this.emit('messageSent', message);
-    
+
     return message;
   }
 
@@ -74,16 +74,50 @@ export class MeshNode extends EventEmitter {
    * Wait for Bluetooth to be ready
    */
   private waitForBluetooth(): Promise<void> {
-    return new Promise((resolve) => {
-      if ((noble as any).state === 'poweredOn') {
+    return new Promise((resolve, reject) => {
+      const currentState = (noble as any).state;
+
+      if (currentState === 'poweredOn') {
         resolve();
-      } else {
-        noble.once('stateChange', (state) => {
-          if (state === 'poweredOn') {
-            resolve();
-          }
-        });
+        return;
       }
+
+      // Check for definite error states (but not "unknown")
+      if (currentState === 'unsupported') {
+        reject(new Error('Bluetooth is not supported on this system'));
+        return;
+      }
+
+      if (currentState === 'unauthorized') {
+        reject(new Error('Bluetooth access is unauthorized. Please enable Bluetooth permissions.'));
+        return;
+      }
+
+      if (currentState === 'poweredOff') {
+        reject(new Error('Bluetooth is powered off. Please turn on Bluetooth in Windows Settings.'));
+        return;
+      }
+
+      // If state is "unknown" or any other state, wait for state change
+      // Windows often starts with "unknown" and transitions to "poweredOn"
+      const timeout = setTimeout(() => {
+        reject(new Error(`Bluetooth initialization timeout. State remained: ${(noble as any).state}. Please check that:\n1. Visual Studio Build Tools with C++ are installed\n2. Windows Bluetooth is enabled\n3. Bluetooth adapter is present in Device Manager\n4. Try: npm rebuild @abandonware/noble`));
+      }, 15000); // 15 second timeout
+
+      noble.once('stateChange', (state) => {
+        clearTimeout(timeout);
+        if (state === 'poweredOn') {
+          resolve();
+        } else if (state === 'poweredOff') {
+          reject(new Error('Bluetooth is powered off. Please turn on Bluetooth in Windows Settings.'));
+        } else if (state === 'unsupported') {
+          reject(new Error('Bluetooth is not supported on this system'));
+        } else if (state === 'unauthorized') {
+          reject(new Error('Bluetooth access is unauthorized. Please enable Bluetooth permissions.'));
+        } else {
+          reject(new Error(`Bluetooth state changed to: ${state}`));
+        }
+      });
     });
   }
 
@@ -109,11 +143,34 @@ export class MeshNode extends EventEmitter {
    */
   private handlePeripheralDiscovered(peripheral: any): void {
     const advertisement = peripheral.advertisement;
-    
+
+    // Log ALL discovered BLE devices for debugging
+    console.log('📡 BLE Device discovered:', {
+      id: peripheral.id,
+      address: peripheral.address,
+      addressType: peripheral.addressType,
+      rssi: peripheral.rssi,
+      localName: advertisement.localName,
+      txPowerLevel: advertisement.txPowerLevel,
+      manufacturerData: advertisement.manufacturerData?.toString('hex'),
+      serviceUuids: advertisement.serviceUuids,
+      serviceDataCount: advertisement.serviceData?.length || 0,
+    });
+
+    // Log service data in detail
+    if (advertisement.serviceData && advertisement.serviceData.length > 0) {
+      console.log('  📦 Service Data:', advertisement.serviceData.map((sd: any) => ({
+        uuid: sd.uuid,
+        dataHex: sd.data.toString('hex'),
+        dataLength: sd.data.length,
+      })));
+    }
+
     // Look for ghost-mesh service data
     if (advertisement.serviceData) {
       for (const serviceData of advertisement.serviceData) {
         if (serviceData.uuid === GHOST_MESH_SERVICE_UUID) {
+          console.log('✅ Found GhostMesh service data!');
           this.handleMessageReceived(serviceData.data);
         }
       }
@@ -125,7 +182,7 @@ export class MeshNode extends EventEmitter {
    */
   private handleMessageReceived(buffer: Buffer): void {
     const message = deserializeMessage(buffer);
-    
+
     if (!message) {
       return; // Invalid message
     }
@@ -185,7 +242,7 @@ export class MeshNode extends EventEmitter {
   clearOldSeenMessages(olderThan: number = 3600000): void {
     const cutoff = Date.now() - olderThan;
     const messagesToRemove: string[] = [];
-    
+
     // Note: This is a simple implementation. In production, you'd want to
     // store timestamps with message IDs for proper cleanup
     if (this.seenMessages.size > 1000) {

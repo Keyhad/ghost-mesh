@@ -21,6 +21,8 @@ export class GhostMeshNetwork {
   private reconnectTimeout: NodeJS.Timeout | null = null;
   private onDeviceUpdate?: (devices: Device[]) => void;
   private onMessageReceived?: (message: Message) => void;
+  private meshActive: boolean = false;
+  private onStatusChange?: (active: boolean) => void;
 
   constructor(myPhone: string) {
     this.myPhone = myPhone;
@@ -64,6 +66,8 @@ export class GhostMeshNetwork {
       this.ws.onclose = () => {
         console.log('🔌 Disconnected from BLE server');
         this.ws = null;
+        this.meshActive = false;
+        this.onStatusChange?.(false);
         this.attemptReconnect();
       };
 
@@ -93,6 +97,8 @@ export class GhostMeshNetwork {
     switch (event.type) {
       case 'connected':
         console.log('✅ BLE mesh node initialized');
+        this.meshActive = true;
+        this.onStatusChange?.(true);
         break;
 
       case 'device_update':
@@ -116,6 +122,8 @@ export class GhostMeshNetwork {
 
       case 'error':
         console.error('❌ BLE server error:', event.error);
+        this.meshActive = false;
+        this.onStatusChange?.(false);
         break;
 
       default:
@@ -209,5 +217,13 @@ export class GhostMeshNetwork {
       this.ws.close();
       this.ws = null;
     }
+  }
+
+  setOnStatusChange(callback: (active: boolean) => void) {
+    this.onStatusChange = callback;
+  }
+
+  isMeshActive(): boolean {
+    return this.meshActive;
   }
 }

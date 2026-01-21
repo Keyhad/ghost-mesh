@@ -24,6 +24,7 @@ export default function Home() {
   const [devices, setDevices] = useState<Device[]>([]);
   const [network, setNetwork] = useState<GhostMeshNetwork | null>(null);
   const [expandedSections, setExpandedSections] = useState<Set<TabKey>>(new Set(['dashboard']));
+  const [meshActive, setMeshActive] = useState(false);
 
   const toggleSection = (section: TabKey) => {
     const newExpanded = new Set(expandedSections);
@@ -53,6 +54,9 @@ export default function Home() {
     });
     meshNetwork.setOnMessageReceived((message) => {
       setMessages(prev => [...prev, message]);
+    });
+    meshNetwork.setOnStatusChange((active) => {
+      setMeshActive(active);
     });
     setNetwork(meshNetwork);
     setDevices(meshNetwork.getAllDevices());
@@ -157,11 +161,11 @@ export default function Home() {
                 <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
                   <span className="material-symbols-rounded text-blue-600 dark:text-blue-400 text-xl">bluetooth</span>
                 </div>
-                {connectedCount > 0 && (
+                {meshActive && (
                   <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white dark:border-zinc-900 animate-pulse" />
                 )}
               </div>
-              <StatusBadge connected={connectedCount > 0} />
+              <StatusBadge connected={meshActive} />
               <div className="px-3 py-1.5 rounded-full bg-gray-100 dark:bg-zinc-800">
                 <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">{connectedCount} peers</span>
               </div>
