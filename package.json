@@ -1,39 +1,44 @@
 {
   "name": "ghost-mesh",
   "version": "1.0.0",
-  "description": "A decentralized, off-grid mesh chat application using BLE. No internet, no servers, no accounts.",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "bin": {
-    "ghost-mesh": "dist/cli.js"
-  },
+  "description": "Implies a network that exists even when the \"real\" one is dead.",
+  "main": "electron/main.js",
   "scripts": {
-    "build": "tsc",
-    "start": "npm run build && node dist/cli.js",
-    "dev": "tsc --watch",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "electron:dev": "concurrently \"cross-env NODE_ENV=development npm run dev\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron:build": "next build && electron-builder"
   },
   "keywords": [
-    "mesh",
+    "mesh-network",
     "p2p",
-    "decentralized",
-    "bluetooth",
-    "ble",
-    "offline",
-    "chat"
+    "webrtc",
+    "offline"
   ],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@abandonware/noble": "^1.9.2-26",
+    "@tailwindcss/postcss": "^4.1.18",
     "@types/node": "^25.0.9",
+    "@types/react": "^19.2.9",
+    "@types/react-dom": "^19.2.3",
+    "autoprefixer": "^10.4.23",
+    "next": "^16.1.4",
+    "postcss": "^8.5.6",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "simple-peer": "^9.11.1",
+    "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "@types/jest": "^30.0.0",
-    "jest": "^30.2.0",
-    "ts-jest": "^29.4.6"
+    "@types/simple-peer": "^9.11.9",
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0",
+    "electron": "^40.0.0",
+    "electron-builder": "^26.4.0",
+    "wait-on": "^9.0.3"
   }
 }
