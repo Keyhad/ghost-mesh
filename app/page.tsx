@@ -1,9 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { storage } from '@/lib/storage';
 import { GhostMeshNetwork } from '@/lib/mesh-network';
 import { Message, Device, Contact } from '@/lib/types';
+import { Card } from '@/components/Card';
+import { StatusBadge } from '@/components/StatusBadge';
+import { DashboardCard } from '@/components/DashboardCard';
+import { ContactsCard } from '@/components/ContactsCard';
+import { ChatsCard } from '@/components/ChatsCard';
+
+type TabKey = 'dashboard' | 'contacts' | 'chats';
 
 export default function Home() {
   const [myPhone, setMyPhone] = useState<string>('');
@@ -16,7 +23,17 @@ export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [devices, setDevices] = useState<Device[]>([]);
   const [network, setNetwork] = useState<GhostMeshNetwork | null>(null);
-  const [activeTab, setActiveTab] = useState<'messages' | 'contacts' | 'devices'>('messages');
+  const [expandedSections, setExpandedSections] = useState<Set<TabKey>>(new Set(['dashboard']));
+
+  const toggleSection = (section: TabKey) => {
+    const newExpanded = new Set(expandedSections);
+    if (newExpanded.has(section)) {
+      newExpanded.delete(section);
+    } else {
+      newExpanded.add(section);
+    }
+    setExpandedSections(newExpanded);
+  };
 
   useEffect(() => {
     const savedPhone = storage.getMyPhone();
@@ -27,7 +44,7 @@ export default function Home() {
     }
     setContacts(storage.getContacts());
     setMessages(storage.getMessages());
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const initNetwork = (phone: string) => {
     const meshNetwork = new GhostMeshNetwork(phone);
@@ -69,235 +86,131 @@ export default function Home() {
     return contact ? contact.name : phoneNumber;
   };
 
+  const connectedCount = useMemo(
+    () => devices.filter(d => d.connected).length,
+    [devices]
+  );
+
+  const recentMessages = useMemo(
+    () => messages.slice(-5).reverse(),
+    [messages]
+  );
+
   if (!isSetup) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-black p-4">
-        <div className="bg-gray-800 rounded-lg shadow-xl p-8 max-w-md w-full">
-          <h1 className="text-3xl font-bold text-white mb-6 text-center">GhostMesh</h1>
-          <p className="text-gray-300 mb-4 text-center">Enter your phone number to join the mesh network</p>
-          <input
-            type="tel"
-            value={phoneInput}
-            onChange={(e) => setPhoneInput(e.target.value)}
-            placeholder="+1234567890"
-            className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            onClick={setupPhone}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition"
-          >
-            Setup
-          </button>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 grid place-items-center p-6">
+        <Card className="w-full max-w-md p-10">
+          <div className="text-center space-y-6">
+            <div className="mx-auto w-20 h-20 rounded-3xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/30">
+              <span className="material-symbols-rounded text-4xl">hub</span>
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">GhostMesh</h1>
+              <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">Enter the decentralized mesh network</p>
+            </div>
+          </div>
+          <div className="mt-10 flex flex-col items-center gap-6">
+            <div className="flex flex-col items-center gap-4">
+              <span className="material-symbols-rounded text-gray-400 text-4xl">call</span>
+              <label className="text-xs font-medium text-gray-500 dark:text-gray-400 text-center">Phone Number</label>
+              <div className="flex items-center justify-center rounded-2xl bg-gray-100 dark:bg-zinc-800 px-5 py-3.5 w-72">
+                <input
+                  type="tel"
+                  value={phoneInput}
+                  onChange={(e) => setPhoneInput(e.target.value)}
+                  placeholder="+1234567890"
+                  className="w-full bg-transparent outline-none text-gray-900 dark:text-white placeholder:text-gray-400 text-center"
+                  onKeyPress={(e) => e.key === 'Enter' && setupPhone()}
+                />
+              </div>
+            </div>
+            <button
+              onClick={setupPhone}
+              className="px-10 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold hover:shadow-lg hover:shadow-blue-500/30 transition-all"
+            >
+              Continue
+            </button>
+          </div>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black">
-      <div className="max-w-6xl mx-auto p-4">
-        <div className="bg-gray-800 rounded-lg shadow-xl overflow-hidden">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6">
-            <h1 className="text-2xl font-bold text-white">GhostMesh</h1>
-            <p className="text-blue-100 mt-1">Your ID: {myPhone}</p>
-            <p className="text-blue-100 text-sm">
-              Connected Devices: {devices.filter(d => d.connected).length}
-            </p>
-          </div>
-
-          {/* Tabs */}
-          <div className="flex border-b border-gray-700">
-            <button
-              onClick={() => setActiveTab('messages')}
-              className={`flex-1 py-4 px-6 font-medium transition ${
-                activeTab === 'messages'
-                  ? 'bg-gray-700 text-white border-b-2 border-blue-500'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              Messages
-            </button>
-            <button
-              onClick={() => setActiveTab('contacts')}
-              className={`flex-1 py-4 px-6 font-medium transition ${
-                activeTab === 'contacts'
-                  ? 'bg-gray-700 text-white border-b-2 border-blue-500'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              Contacts
-            </button>
-            <button
-              onClick={() => setActiveTab('devices')}
-              className={`flex-1 py-4 px-6 font-medium transition ${
-                activeTab === 'devices'
-                  ? 'bg-gray-700 text-white border-b-2 border-blue-500'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              Devices
-            </button>
-          </div>
-
-          {/* Content */}
-          <div className="p-6">
-            {activeTab === 'messages' && (
-              <div className="space-y-4">
-                <div className="bg-gray-700 rounded-lg p-4">
-                  <h3 className="text-white font-medium mb-3">Send Message</h3>
-                  <select
-                    value={selectedContact}
-                    onChange={(e) => setSelectedContact(e.target.value)}
-                    className="w-full px-4 py-2 bg-gray-600 text-white rounded mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">Select Contact</option>
-                    {contacts.map((c) => (
-                      <option key={c.phoneNumber} value={c.phoneNumber}>
-                        {c.name} ({c.phoneNumber})
-                      </option>
-                    ))}
-                  </select>
-                  <input
-                    type="text"
-                    value={messageText}
-                    onChange={(e) => setMessageText(e.target.value)}
-                    placeholder="Type your message..."
-                    className="w-full px-4 py-2 bg-gray-600 text-white rounded mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                  />
-                  <button
-                    onClick={sendMessage}
-                    disabled={!selectedContact || !messageText.trim()}
-                    className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-bold py-2 rounded transition"
-                  >
-                    Send via Mesh
-                  </button>
-                </div>
-
-                <div className="bg-gray-700 rounded-lg p-4 max-h-96 overflow-y-auto">
-                  <h3 className="text-white font-medium mb-3">Message History</h3>
-                  {messages.length === 0 ? (
-                    <p className="text-gray-400 text-center py-4">No messages yet</p>
-                  ) : (
-                    <div className="space-y-2">
-                      {messages.map((msg) => (
-                        <div
-                          key={msg.id}
-                          className={`p-3 rounded ${
-                            msg.srcId === myPhone ? 'bg-blue-600 ml-8' : 'bg-gray-600 mr-8'
-                          }`}
-                        >
-                          <div className="flex justify-between items-start mb-1">
-                            <span className="text-white font-medium text-sm">
-                              {msg.srcId === myPhone ? 'You' : getContactName(msg.srcId)}
-                            </span>
-                            <span className="text-gray-300 text-xs">
-                              {new Date(msg.timestamp).toLocaleTimeString()}
-                            </span>
-                          </div>
-                          <p className="text-white">{msg.content}</p>
-                          <p className="text-gray-300 text-xs mt-1">
-                            Hops: {msg.hops.length} | TTL: {msg.ttl}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+    <div className="min-h-screen bg-gray-50 dark:bg-zinc-950">
+      {/* Header */}
+      <header className="sticky top-0 z-10 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl shadow-sm">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-md">
+                <span className="material-symbols-rounded text-xl">hub</span>
               </div>
-            )}
-
-            {activeTab === 'contacts' && (
-              <div className="space-y-4">
-                <div className="bg-gray-700 rounded-lg p-4">
-                  <h3 className="text-white font-medium mb-3">Add Contact</h3>
-                  <input
-                    type="text"
-                    value={newContact.name}
-                    onChange={(e) => setNewContact({ ...newContact, name: e.target.value })}
-                    placeholder="Contact Name"
-                    className="w-full px-4 py-2 bg-gray-600 text-white rounded mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <input
-                    type="tel"
-                    value={newContact.phoneNumber}
-                    onChange={(e) => setNewContact({ ...newContact, phoneNumber: e.target.value })}
-                    placeholder="Phone Number"
-                    className="w-full px-4 py-2 bg-gray-600 text-white rounded mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <button
-                    onClick={addContact}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded transition"
-                  >
-                    Add Contact
-                  </button>
-                </div>
-
-                <div className="bg-gray-700 rounded-lg p-4">
-                  <h3 className="text-white font-medium mb-3">Your Contacts</h3>
-                  {contacts.length === 0 ? (
-                    <p className="text-gray-400 text-center py-4">No contacts yet</p>
-                  ) : (
-                    <div className="space-y-2">
-                      {contacts.map((contact) => (
-                        <div
-                          key={contact.phoneNumber}
-                          className="bg-gray-600 p-3 rounded flex justify-between items-center"
-                        >
-                          <div>
-                            <p className="text-white font-medium">{contact.name}</p>
-                            <p className="text-gray-300 text-sm">{contact.phoneNumber}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white">GhostMesh</h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{myPhone}</p>
               </div>
-            )}
-
-            {activeTab === 'devices' && (
-              <div className="bg-gray-700 rounded-lg p-4">
-                <h3 className="text-white font-medium mb-3">Nearby Devices</h3>
-                <p className="text-gray-300 text-sm mb-4">
-                  Scanning for GhostMesh signals... (WebRTC peer-to-peer connections)
-                </p>
-                {devices.length === 0 ? (
-                  <p className="text-gray-400 text-center py-4">No devices discovered</p>
-                ) : (
-                  <div className="space-y-2">
-                    {devices.map((device) => (
-                      <div
-                        key={device.id}
-                        className={`p-3 rounded flex justify-between items-center ${
-                          device.connected ? 'bg-green-900' : 'bg-gray-600'
-                        }`}
-                      >
-                        <div>
-                          <p className="text-white font-medium">{device.id}</p>
-                          <p className="text-gray-300 text-sm">
-                            Last seen: {new Date(device.lastSeen).toLocaleString()}
-                          </p>
-                        </div>
-                        <span
-                          className={`px-3 py-1 rounded text-sm ${
-                            device.connected
-                              ? 'bg-green-600 text-white'
-                              : 'bg-gray-500 text-gray-300'
-                          }`}
-                        >
-                          {device.connected ? 'Connected' : 'Offline'}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+            </div>
+            <div className="flex items-center gap-3">
+              {/* Bluetooth Beacon */}
+              <div className="relative">
+                <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                  <span className="material-symbols-rounded text-blue-600 dark:text-blue-400 text-xl">bluetooth</span>
+                </div>
+                {connectedCount > 0 && (
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white dark:border-zinc-900 animate-pulse" />
                 )}
               </div>
-            )}
+              <StatusBadge connected={connectedCount > 0} />
+              <div className="px-3 py-1.5 rounded-full bg-gray-100 dark:bg-zinc-800">
+                <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">{connectedCount} peers</span>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </header>
+
+      {/* Main Content - Collapsible Cards */}
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 pb-12 space-y-4">
+        <DashboardCard
+          isExpanded={expandedSections.has('dashboard')}
+          onToggle={() => toggleSection('dashboard')}
+          connectedCount={connectedCount}
+          messages={messages}
+          recentMessages={recentMessages}
+          devices={devices}
+          myPhone={myPhone}
+          getContactName={getContactName}
+          onViewAllChats={() => toggleSection('chats')}
+        />
+
+        <ContactsCard
+          isExpanded={expandedSections.has('contacts')}
+          onToggle={() => toggleSection('contacts')}
+          contacts={contacts}
+          newContact={newContact}
+          onNewContactChange={setNewContact}
+          onAddContact={addContact}
+          onSelectContact={(phoneNumber) => {
+            setSelectedContact(phoneNumber);
+            toggleSection('chats');
+          }}
+        />
+
+        <ChatsCard
+          isExpanded={expandedSections.has('chats')}
+          onToggle={() => toggleSection('chats')}
+          contacts={contacts}
+          selectedContact={selectedContact}
+          onSelectContact={setSelectedContact}
+          messages={messages}
+          messageText={messageText}
+          onMessageTextChange={setMessageText}
+          onSendMessage={sendMessage}
+          myPhone={myPhone}
+          getContactName={getContactName}
+        />
+      </main>
     </div>
   );
 }

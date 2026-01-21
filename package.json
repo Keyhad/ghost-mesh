@@ -7,9 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "electron:dev": "concurrently \"cross-env NODE_ENV=development npm run dev\" \"wait-on http://localhost:3000 && electron .\"",
-    "electron:build": "next build && electron-builder"
+    "lint": "next lint"
   },
   "keywords": [
     "mesh-network",
@@ -20,6 +18,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@abandonware/noble": "^1.9.2-26",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/node": "^25.0.9",
     "@types/react": "^19.2.9",
@@ -34,11 +33,6 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "@types/simple-peer": "^9.11.9",
-    "concurrently": "^9.2.1",
-    "cross-env": "^10.1.0",
-    "electron": "^40.0.0",
-    "electron-builder": "^26.4.0",
-    "wait-on": "^9.0.3"
+    "@types/simple-peer": "^9.11.9"
   }
 }
