@@ -1,0 +1,39 @@
+{
+  "name": "ghost-mesh",
+  "version": "1.0.0",
+  "description": "A decentralized, off-grid mesh chat application using BLE. No internet, no servers, no accounts.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "ghost-mesh": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node dist/cli.js",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "keywords": [
+    "mesh",
+    "p2p",
+    "decentralized",
+    "bluetooth",
+    "ble",
+    "offline",
+    "chat"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@abandonware/noble": "^1.9.2-26",
+    "@types/node": "^25.0.9",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6"
+  }
+}
