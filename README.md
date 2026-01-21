@@ -8,7 +8,7 @@ A decentralized, off-grid chat application that turns your phone and computer in
 
 - 📱 **Number-based Routing**: Uses your existing phone number as your ID
 - 🔁 **Auto-Relay**: Every device that receives a message automatically rebroadcasts it to extend the range
-- 🔒 **Privacy**: Messages are addressed to specific phone numbers via direct byte-matching
+- � **Simple Protocol**: Basic message packing and routing with no encryption
 - 📡 **Zero Infrastructure**: Works purely on Bluetooth Low Energy (BLE)
 - 🌐 **Mesh Network**: Messages hop from device to device to reach their destination
 - 💬 **Peer-to-Peer**: Direct communication without central servers
@@ -46,12 +46,12 @@ Each message contains:
 - `timestamp`: Message creation time
 - `hops`: Number of relays (max 10)
 
-### Privacy
+### Routing
 
-Messages use direct byte-matching for privacy:
+Messages use direct byte-matching for routing:
 - Phone numbers are normalized and compared directly
 - No central directory or lookup service
-- Messages are only decrypted by the intended recipient
+- All messages are broadcast openly over BLE - **no encryption or privacy**
 
 ## Installation
 
@@ -159,16 +159,30 @@ npm run build
 npm start
 ```
 
-## Security Considerations
+## Important Security Notice
 
-- Messages are currently transmitted in plain text over BLE
-- Phone numbers are used as identifiers (consider privacy implications)
-- No authentication mechanism (anyone can send messages)
-- Consider adding encryption for sensitive communications
+**⚠️ GhostMesh currently has NO encryption or authentication.**
+
+- All messages are transmitted in plain text over BLE
+- Anyone within range can read all messages
+- Phone numbers are visible identifiers
+- No sender verification - anyone can impersonate any phone number
+- **This is a basic routing protocol, not a secure messaging system**
+
+Use GhostMesh only for:
+- Experimental/educational purposes
+- Non-sensitive communications
+- Emergency coordination where infrastructure is unavailable
+
+**Do NOT use for:**
+- Private conversations
+- Sensitive information
+- Anything requiring confidentiality or authentication
 
 ## Future Enhancements
 
-- End-to-end encryption
+- End-to-end encryption (PKI-based)
+- Message authentication & signing
 - Message acknowledgments
 - Group messaging
 - File sharing
