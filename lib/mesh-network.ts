@@ -1,24 +1,154 @@
 'use client';
 
-import SimplePeer from 'simple-peer';
 import { Message, Device } from './types';
 import { storage } from './storage';
 
+const WS_URL = process.env.NEXT_PUBLIC_BLE_WS_URL || 'ws://localhost:8080';
+
+interface ServerEvent {
+  type: 'connected' | 'device_update' | 'message_received' | 'message_sent' | 'error';
+  devices?: any[];
+  message?: any;
+  error?: string;
+}
+
 export class GhostMeshNetwork {
   private myPhone: string;
-  private peers: Map<string, SimplePeer.Instance> = new Map();
+  private ws: WebSocket | null = null;
   private devices: Device[] = [];
-  private messageQueue: Message[] = [];
+  private reconnectAttempts: number = 0;
+  private maxReconnectAttempts: number = 5;
+  private reconnectTimeout: NodeJS.Timeout | null = null;
   private onDeviceUpdate?: (devices: Device[]) => void;
   private onMessageReceived?: (message: Message) => void;
 
   constructor(myPhone: string) {
     this.myPhone = myPhone;
     this.loadDevices();
+    this.connectWebSocket();
   }
 
   private loadDevices() {
     this.devices = storage.getDevices();
+  }
+
+  private connectWebSocket() {
+    try {
+      console.log(`🔌 Connecting to BLE server at ${WS_URL}...`);
+      this.ws = new WebSocket(WS_URL);
+
+      this.ws.onopen = () => {
+        console.log('✅ Connected to BLE server');
+        this.reconnectAttempts = 0;
+
+        // Initialize mesh node with our phone number
+        this.sendCommand({
+          type: 'init',
+          phoneNumber: this.myPhone,
+        });
+      };
+
+      this.ws.onmessage = (event) => {
+        try {
+          const serverEvent: ServerEvent = JSON.parse(event.data);
+          this.handleServerEvent(serverEvent);
+        } catch (error) {
+          console.error('Error parsing server event:', error);
+        }
+      };
+
+      this.ws.onerror = (error) => {
+        console.error('❌ WebSocket error:', error);
+      };
+
+      this.ws.onclose = () => {
+        console.log('🔌 Disconnected from BLE server');
+        this.ws = null;
+        this.attemptReconnect();
+      };
+
+    } catch (error) {
+      console.error('Failed to create WebSocket connection:', error);
+      this.attemptReconnect();
+    }
+  }
+
+  private attemptReconnect() {
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+      console.error('❌ Max reconnection attempts reached. Please start the BLE server.');
+      return;
+    }
+
+    this.reconnectAttempts++;
+    const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 10000);
+
+    console.log(`🔄 Attempting to reconnect in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);
+
+    this.reconnectTimeout = setTimeout(() => {
+      this.connectWebSocket();
+    }, delay);
+  }
+
+  private handleServerEvent(event: ServerEvent) {
+    switch (event.type) {
+      case 'connected':
+        console.log('✅ BLE mesh node initialized');
+        break;
+
+      case 'device_update':
+        if (event.devices) {
+          this.updateDevices(event.devices);
+        }
+        break;
+
+      case 'message_received':
+        if (event.message) {
+          this.handleReceivedMessage(event.message);
+        }
+        break;
+
+      case 'message_sent':
+        if (event.message) {
+          // Message was successfully sent via BLE
+          console.log('📤 Message sent via BLE:', event.message.id);
+        }
+        break;
+
+      case 'error':
+        console.error('❌ BLE server error:', event.error);
+        break;
+
+      default:
+        console.warn('Unknown server event:', event.type);
+    }
+  }
+
+  private updateDevices(newDevices: any[]) {
+    newDevices.forEach(newDevice => {
+      const existing = this.devices.find(d => d.id === newDevice.id);
+      if (existing) {
+        existing.connected = newDevice.connected;
+        existing.lastSeen = newDevice.lastSeen || Date.now();
+      } else {
+        this.devices.push({
+          id: newDevice.id,
+          peerId: newDevice.id,
+          lastSeen: newDevice.lastSeen || Date.now(),
+          connected: newDevice.connected,
+        });
+      }
+    });
+
+    storage.updateDevices(this.devices);
+    this.onDeviceUpdate?.(this.devices);
+  }
+
+  private sendCommand(command: any) {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify(command));
+    } else {
+      console.warn('⚠️ WebSocket not connected, command queued');
+    }
   }
 
   setOnDeviceUpdate(callback: (devices: Device[]) => void) {
@@ -29,80 +159,6 @@ export class GhostMeshNetwork {
     this.onMessageReceived = callback;
   }
 
-  // Create a peer connection (initiator)
-  createPeer(deviceId: string): SimplePeer.Instance {
-    const peer = new SimplePeer({
-      initiator: true,
-      trickle: false,
-    });
-
-    this.setupPeerHandlers(peer, deviceId);
-    this.peers.set(deviceId, peer);
-    return peer;
-  }
-
-  // Accept a peer connection
-  acceptPeer(deviceId: string, signalData: any): SimplePeer.Instance {
-    const peer = new SimplePeer({
-      initiator: false,
-      trickle: false,
-    });
-
-    this.setupPeerHandlers(peer, deviceId);
-    peer.signal(signalData);
-    this.peers.set(deviceId, peer);
-    return peer;
-  }
-
-  private setupPeerHandlers(peer: SimplePeer.Instance, deviceId: string) {
-    peer.on('signal', (data) => {
-      // In a real app, this would be sent via a signaling server
-      // For now, we'll use local broadcast or manual sharing
-      console.log('Signal data for', deviceId, data);
-    });
-
-    peer.on('connect', () => {
-      console.log('Connected to', deviceId);
-      this.updateDeviceStatus(deviceId, true);
-      
-      // Send pending messages for this device
-      this.processPendingMessages(deviceId);
-    });
-
-    peer.on('data', (data) => {
-      const message: Message = JSON.parse(data.toString());
-      this.handleReceivedMessage(message);
-    });
-
-    peer.on('error', (err) => {
-      console.error('Peer error:', err);
-      this.updateDeviceStatus(deviceId, false);
-    });
-
-    peer.on('close', () => {
-      console.log('Disconnected from', deviceId);
-      this.updateDeviceStatus(deviceId, false);
-      this.peers.delete(deviceId);
-    });
-  }
-
-  private updateDeviceStatus(deviceId: string, connected: boolean) {
-    const device = this.devices.find(d => d.id === deviceId);
-    if (device) {
-      device.connected = connected;
-      device.lastSeen = Date.now();
-    } else {
-      this.devices.push({
-        id: deviceId,
-        peerId: deviceId,
-        lastSeen: Date.now(),
-        connected,
-      });
-    }
-    storage.updateDevices(this.devices);
-    this.onDeviceUpdate?.(this.devices);
-  }
-
   sendMessage(dstId: string, content: string) {
     const message: Message = {
       id: `${Date.now()}-${Math.random()}`,
@@ -111,45 +167,17 @@ export class GhostMeshNetwork {
       content,
       timestamp: Date.now(),
       hops: [this.myPhone],
-      ttl: 10, // Max 10 hops
+      ttl: 10,
     };
 
     storage.addMessage(message);
-    this.routeMessage(message);
-  }
 
-  private routeMessage(message: Message) {
-    // If we're the destination, deliver it
-    if (message.dstId === this.myPhone) {
-      this.onMessageReceived?.(message);
-      return;
-    }
-
-    // If TTL expired, drop it
-    if (message.ttl <= 0) {
-      console.log('Message TTL expired:', message.id);
-      return;
-    }
-
-    // Forward to all connected peers except those in hops
-    let forwarded = false;
-    this.peers.forEach((peer, deviceId) => {
-      if (!message.hops.includes(deviceId) && peer.connected) {
-        const forwardMessage = {
-          ...message,
-          hops: [...message.hops, this.myPhone],
-          ttl: message.ttl - 1,
-        };
-        
-        peer.send(JSON.stringify(forwardMessage));
-        forwarded = true;
-      }
+    // Send via WebSocket to BLE server
+    this.sendCommand({
+      type: 'send_message',
+      to: dstId,
+      content,
     });
-
-    if (!forwarded) {
-      // Queue for later if no peers available
-      this.messageQueue.push(message);
-    }
   }
 
   private handleReceivedMessage(message: Message) {
@@ -159,34 +187,7 @@ export class GhostMeshNetwork {
     // If we're the destination, notify
     if (message.dstId === this.myPhone) {
       this.onMessageReceived?.(message);
-      return;
     }
-
-    // Otherwise, forward it
-    this.routeMessage(message);
-  }
-
-  private processPendingMessages(deviceId: string) {
-    const peer = this.peers.get(deviceId);
-    if (!peer || !peer.connected) return;
-
-    const remaining: Message[] = [];
-    for (const message of this.messageQueue) {
-      if (!message.hops.includes(deviceId)) {
-        const forwardMessage = {
-          ...message,
-          hops: [...message.hops, this.myPhone],
-          ttl: message.ttl - 1,
-        };
-        
-        if (forwardMessage.ttl > 0) {
-          peer.send(JSON.stringify(forwardMessage));
-        }
-      } else {
-        remaining.push(message);
-      }
-    }
-    this.messageQueue = remaining;
   }
 
   getConnectedDevices(): Device[] {
@@ -198,7 +199,15 @@ export class GhostMeshNetwork {
   }
 
   disconnect() {
-    this.peers.forEach(peer => peer.destroy());
-    this.peers.clear();
+    if (this.reconnectTimeout) {
+      clearTimeout(this.reconnectTimeout);
+      this.reconnectTimeout = null;
+    }
+
+    if (this.ws) {
+      this.sendCommand({ type: 'disconnect' });
+      this.ws.close();
+      this.ws = null;
+    }
   }
 }
