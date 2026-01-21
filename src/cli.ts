@@ -6,7 +6,7 @@
 
 import * as readline from 'readline';
 import { MeshNode } from './mesh';
-import { Message } from './protocol';
+import { Message, MAX_HOPS } from './protocol';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -75,12 +75,12 @@ async function registerNode(phoneNumber: string): Promise<void> {
   });
 
   meshNode.on('messageRelayed', (message: Message) => {
-    console.log(`🔁 Relayed message ${message.id.substr(0, 8)}... (hop ${message.hops}/${10})`);
+    console.log(`🔁 Relayed message ${message.id.slice(0, 8)}... (hop ${message.hops}/${MAX_HOPS})`);
   });
 
   meshNode.on('broadcast', ({ message }) => {
     // In a real implementation, this would trigger BLE advertising
-    console.log(`📡 Broadcasting message ${message.id.substr(0, 8)}...`);
+    console.log(`📡 Broadcasting message ${message.id.slice(0, 8)}...`);
   });
 
   try {

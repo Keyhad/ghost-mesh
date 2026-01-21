@@ -10,7 +10,8 @@ import {
   serializeMessage, 
   deserializeMessage, 
   phoneNumberMatches,
-  MAX_HOPS
+  MAX_HOPS,
+  generateMessageId
 } from './protocol';
 
 // Service UUID for ghost-mesh
@@ -56,7 +57,7 @@ export class MeshNode extends EventEmitter {
       to,
       from: this.phoneNumber,
       content,
-      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: generateMessageId(),
       timestamp: Date.now(),
       hops: 0
     };
