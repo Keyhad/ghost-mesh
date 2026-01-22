@@ -13,6 +13,7 @@ import {
   MAX_HOPS,
   generateMessageId
 } from './protocol';
+import { logger } from './logger';
 
 // Service UUID for ghost-mesh
 const GHOST_MESH_SERVICE_UUID = '12345678123456781234567812345678';
@@ -23,6 +24,7 @@ export class MeshNode extends EventEmitter {
   private seenMessages: Set<string> = new Set();
   private messageQueue: Message[] = [];
   private isScanning: boolean = false;
+  private discoveredDevices: Map<string, { lastSeen: number; rssi: number }> = new Map();
 
   constructor(phoneNumber: string) {
     super();
@@ -144,8 +146,20 @@ export class MeshNode extends EventEmitter {
   private handlePeripheralDiscovered(peripheral: any): void {
     const advertisement = peripheral.advertisement;
 
+    // Track this device
+    this.discoveredDevices.set(peripheral.id, {
+      lastSeen: Date.now(),
+      rssi: peripheral.rssi,
+    });
+
+    // Emit device discovered event with current count
+    this.emit('deviceDiscovered', {
+      id: peripheral.id,
+      totalCount: this.discoveredDevices.size,
+    });
+
     // Log ALL discovered BLE devices for debugging
-    console.log('📡 BLE Device discovered:', {
+    logger.ble('BLE Device discovered:', {
       id: peripheral.id,
       address: peripheral.address,
       addressType: peripheral.addressType,
@@ -159,7 +173,7 @@ export class MeshNode extends EventEmitter {
 
     // Log service data in detail
     if (advertisement.serviceData && advertisement.serviceData.length > 0) {
-      console.log('  📦 Service Data:', advertisement.serviceData.map((sd: any) => ({
+      logger.debug('  Service Data:', advertisement.serviceData.map((sd: any) => ({
         uuid: sd.uuid,
         dataHex: sd.data.toString('hex'),
         dataLength: sd.data.length,
@@ -170,7 +184,7 @@ export class MeshNode extends EventEmitter {
     if (advertisement.serviceData) {
       for (const serviceData of advertisement.serviceData) {
         if (serviceData.uuid === GHOST_MESH_SERVICE_UUID) {
-          console.log('✅ Found GhostMesh service data!');
+          logger.success('Found GhostMesh service data!');
           this.handleMessageReceived(serviceData.data);
         }
       }

@@ -27,15 +27,15 @@ export const ContactsCard = ({
       >
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 text-white flex items-center justify-center">
-            <span className="material-symbols-rounded text-2xl">contacts</span>
+            <span className="material-symbols-rounded text-2xl leading-none">contacts</span>
           </div>
           <div className="text-left">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Contacts</h2>
-            <p className="text-xs text-gray-500 dark:text-gray-400">{contacts.length} contacts saved</p>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white leading-none">Contacts</h2>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{contacts.length} contacts saved</p>
           </div>
         </div>
         <span
-          className={`material-symbols-rounded text-gray-400 transition-transform ${
+          className={`material-symbols-rounded text-gray-400 transition-transform leading-none ${
             isExpanded ? 'rotate-180' : ''
           }`}
         >
@@ -51,7 +51,7 @@ export const ContactsCard = ({
               <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-4">Add Contact</h3>
               <div className="space-y-3">
                 <div className="flex items-center gap-2 rounded-xl bg-white dark:bg-zinc-700 px-3 py-2.5">
-                  <span className="material-symbols-rounded text-gray-400 text-lg">person</span>
+                  <span className="material-symbols-rounded text-gray-400 text-lg leading-none">person</span>
                   <input
                     type="text"
                     value={newContact.name}
@@ -61,7 +61,7 @@ export const ContactsCard = ({
                   />
                 </div>
                 <div className="flex items-center gap-2 rounded-xl bg-white dark:bg-zinc-700 px-3 py-2.5">
-                  <span className="material-symbols-rounded text-gray-400 text-lg">call</span>
+                  <span className="material-symbols-rounded text-gray-400 text-lg leading-none">call</span>
                   <input
                     type="tel"
                     value={newContact.phoneNumber}
@@ -85,7 +85,7 @@ export const ContactsCard = ({
               <div className="grid gap-3 sm:grid-cols-2">
                 {contacts.length === 0 ? (
                   <div className="col-span-2 text-center py-8">
-                    <span className="material-symbols-rounded text-3xl text-gray-300 dark:text-gray-700">
+                    <span className="material-symbols-rounded text-3xl text-gray-300 dark:text-gray-700 leading-none">
                       contacts
                     </span>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">No contacts yet</p>

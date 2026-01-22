@@ -2,7 +2,7 @@
 
 ## Project Structure
 
-```
+```plain
 ghost-mesh/
 ├── app/                    # Next.js App Router
 │   ├── page.tsx           # Main application UI
@@ -24,6 +24,7 @@ ghost-mesh/
 ### Mesh Network Layer
 
 The `GhostMeshNetwork` class (`lib/mesh-network.ts`) handles:
+
 - WebRTC peer connection management
 - Message routing and forwarding
 - Device discovery and tracking
@@ -32,6 +33,7 @@ The `GhostMeshNetwork` class (`lib/mesh-network.ts`) handles:
 ### Data Layer
 
 `storage.ts` provides a simple interface to LocalStorage:
+
 - User phone number
 - Contact list
 - Message history
@@ -40,6 +42,7 @@ The `GhostMeshNetwork` class (`lib/mesh-network.ts`) handles:
 ### UI Layer
 
 `app/page.tsx` contains the main React component with:
+
 - Three-tab interface (Messages, Contacts, Devices)
 - Phone number setup flow
 - Real-time device status updates
@@ -50,6 +53,7 @@ The `GhostMeshNetwork` class (`lib/mesh-network.ts`) handles:
 ### Message Routing
 
 Messages use a flooding algorithm with TTL:
+
 1. Message originates at source device
 2. Forwarded to all connected peers (except those in hop history)
 3. Each hop decrements TTL
@@ -59,6 +63,7 @@ Messages use a flooding algorithm with TTL:
 ### WebRTC Signaling
 
 Currently uses manual signaling (logged to console). For production:
+
 - Implement a signaling server
 - Use WebSocket for real-time signaling
 - Support STUN/TURN servers for NAT traversal
@@ -66,6 +71,7 @@ Currently uses manual signaling (logged to console). For production:
 ### Device Discovery
 
 Devices are discovered through:
+
 1. Manual peer connection creation
 2. Signal exchange via console/signaling server
 3. Automatic reconnection on disconnect
@@ -166,6 +172,7 @@ npm run electron:build
 ### WebRTC Support
 
 All major browsers support WebRTC, but:
+
 - Safari has limitations on iOS (requires HTTPS)
 - Firefox requires specific configuration for multiple peers
 - Mobile browsers may have different connection limits
@@ -199,11 +206,13 @@ console.log('Peer connected:', deviceId);
 ### Common Issues
 
 **Issue**: Peers not connecting
+
 - Check browser console for errors
 - Verify WebRTC is enabled
 - Check firewall/network settings
 
 **Issue**: Messages not forwarding
+
 - Verify TTL is > 0
 - Check peer connection status
 - Inspect message queue

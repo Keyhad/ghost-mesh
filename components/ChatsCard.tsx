@@ -35,17 +35,17 @@ export const ChatsCard = ({
       >
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center">
-            <span className="material-symbols-rounded text-2xl">chat</span>
+            <span className="material-symbols-rounded text-2xl leading-none">chat</span>
           </div>
           <div className="text-left">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Chats</h2>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white leading-none">Chats</h2>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               {selectedContact ? getContactName(selectedContact) : 'Select a contact'}
             </p>
           </div>
         </div>
         <span
-          className={`material-symbols-rounded text-gray-400 transition-transform ${
+          className={`material-symbols-rounded text-gray-400 transition-transform leading-none ${
             isExpanded ? 'rotate-180' : ''
           }`}
         >
@@ -62,7 +62,7 @@ export const ChatsCard = ({
               <div className="space-y-2">
                 {contacts.length === 0 ? (
                   <div className="text-center py-8">
-                    <span className="material-symbols-rounded text-3xl text-gray-300 dark:text-gray-700">group</span>
+                    <span className="material-symbols-rounded text-3xl text-gray-300 dark:text-gray-700 leading-none">group</span>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Add a contact to chat</p>
                   </div>
                 ) : (
@@ -126,7 +126,7 @@ export const ChatsCard = ({
                 {messages.length === 0 ? (
                   <div className="h-full flex items-center justify-center">
                     <div className="text-center">
-                      <span className="material-symbols-rounded text-3xl text-gray-300 dark:text-gray-700">chat</span>
+                      <span className="material-symbols-rounded text-3xl text-gray-300 dark:text-gray-700 leading-none">chat</span>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">No messages yet</p>
                     </div>
                   </div>
@@ -169,7 +169,7 @@ export const ChatsCard = ({
                     disabled={!selectedContact || !messageText.trim()}
                     className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-blue-500/30 transition-all flex items-center gap-2"
                   >
-                    <span className="material-symbols-rounded text-lg">send</span>
+                    <span className="material-symbols-rounded text-lg leading-none">send</span>
                   </button>
                 </div>
               </div>

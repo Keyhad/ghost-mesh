@@ -9,8 +9,10 @@ import { StatusBadge } from '@/components/StatusBadge';
 import { DashboardCard } from '@/components/DashboardCard';
 import { ContactsCard } from '@/components/ContactsCard';
 import { ChatsCard } from '@/components/ChatsCard';
+import { PerMonCard } from '@/components/PerMonCard';
+import { DevicesCard } from '@/components/DevicesCard';
 
-type TabKey = 'dashboard' | 'contacts' | 'chats';
+type TabKey = 'dashboard' | 'contacts' | 'chats' | 'permon' | 'devices';
 
 export default function Home() {
   const [myPhone, setMyPhone] = useState<string>('');
@@ -25,6 +27,7 @@ export default function Home() {
   const [network, setNetwork] = useState<GhostMeshNetwork | null>(null);
   const [expandedSections, setExpandedSections] = useState<Set<TabKey>>(new Set(['dashboard']));
   const [meshActive, setMeshActive] = useState(false);
+  const [performanceData, setPerformanceData] = useState<Array<{ timestamp: number; bleDeviceCount: number }>>([]);
 
   const toggleSection = (section: TabKey) => {
     const newExpanded = new Set(expandedSections);
@@ -58,8 +61,12 @@ export default function Home() {
     meshNetwork.setOnStatusChange((active) => {
       setMeshActive(active);
     });
+    meshNetwork.setOnPerformanceUpdate((data) => {
+      setPerformanceData([...data]);
+    });
     setNetwork(meshNetwork);
     setDevices(meshNetwork.getAllDevices());
+    setPerformanceData(meshNetwork.getPerformanceData());
   };
 
   const setupPhone = () => {
@@ -106,16 +113,16 @@ export default function Home() {
         <Card className="w-full max-w-md p-10">
           <div className="text-center space-y-6">
             <div className="mx-auto w-20 h-20 rounded-3xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/30">
-              <span className="material-symbols-rounded text-4xl">hub</span>
+              <span className="material-symbols-rounded text-4xl leading-none">hub</span>
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">GhostMesh</h1>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white leading-none">GhostMesh</h1>
               <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">Enter the decentralized mesh network</p>
             </div>
           </div>
           <div className="mt-10 flex flex-col items-center gap-6">
             <div className="flex flex-col items-center gap-4">
-              <span className="material-symbols-rounded text-gray-400 text-4xl">call</span>
+              <span className="material-symbols-rounded text-gray-400 text-4xl leading-none">call</span>
               <label className="text-xs font-medium text-gray-500 dark:text-gray-400 text-center">Phone Number</label>
               <div className="flex items-center justify-center rounded-2xl bg-gray-100 dark:bg-zinc-800 px-5 py-3.5 w-72">
                 <input
@@ -123,14 +130,14 @@ export default function Home() {
                   value={phoneInput}
                   onChange={(e) => setPhoneInput(e.target.value)}
                   placeholder="+1234567890"
-                  className="w-full bg-transparent outline-none text-gray-900 dark:text-white placeholder:text-gray-400 text-center"
+                  className="w-full bg-transparent outline-none text-gray-900 dark:text-white placeholder:text-gray-400 text-center leading-none"
                   onKeyPress={(e) => e.key === 'Enter' && setupPhone()}
                 />
               </div>
             </div>
             <button
               onClick={setupPhone}
-              className="px-10 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold hover:shadow-lg hover:shadow-blue-500/30 transition-all"
+              className="px-10 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold hover:shadow-lg hover:shadow-blue-500/30 transition-all leading-none"
             >
               Continue
             </button>
@@ -148,26 +155,26 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-md">
-                <span className="material-symbols-rounded text-xl">hub</span>
+                <span className="material-symbols-rounded text-xl leading-none">hub</span>
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white">GhostMesh</h1>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{myPhone}</p>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white leading-none">GhostMesh</h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{myPhone}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               {/* Bluetooth Beacon */}
               <div className="relative">
                 <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                  <span className="material-symbols-rounded text-blue-600 dark:text-blue-400 text-xl">bluetooth</span>
+                  <span className="material-symbols-rounded text-blue-600 dark:text-blue-400 text-xl leading-none">bluetooth</span>
                 </div>
                 {meshActive && (
                   <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white dark:border-zinc-900 animate-pulse" />
                 )}
               </div>
               <StatusBadge connected={meshActive} />
-              <div className="px-3 py-1.5 rounded-full bg-gray-100 dark:bg-zinc-800">
-                <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">{connectedCount} peers</span>
+              <div className="px-3 py-1.5 rounded-full bg-gray-100 dark:bg-zinc-800 flex items-center">
+                <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 leading-none">{connectedCount} peers</span>
               </div>
             </div>
           </div>
@@ -186,6 +193,18 @@ export default function Home() {
           myPhone={myPhone}
           getContactName={getContactName}
           onViewAllChats={() => toggleSection('chats')}
+        />
+
+        <PerMonCard
+          isExpanded={expandedSections.has('permon')}
+          onToggle={() => toggleSection('permon')}
+          performanceData={performanceData}
+        />
+
+        <DevicesCard
+          isExpanded={expandedSections.has('devices')}
+          onToggle={() => toggleSection('devices')}
+          devices={devices}
         />
 
         <ContactsCard

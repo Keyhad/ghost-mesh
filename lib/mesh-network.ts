@@ -23,11 +23,16 @@ export class GhostMeshNetwork {
   private onMessageReceived?: (message: Message) => void;
   private meshActive: boolean = false;
   private onStatusChange?: (active: boolean) => void;
+  private performanceData: Array<{ timestamp: number; bleDeviceCount: number }> = [];
+  private onPerformanceUpdate?: (data: Array<{ timestamp: number; bleDeviceCount: number }>) => void;
+  private performanceInterval: NodeJS.Timeout | null = null;
+  private bleDeviceCount: number = 0;
 
   constructor(myPhone: string) {
     this.myPhone = myPhone;
     this.loadDevices();
     this.connectWebSocket();
+    this.startPerformanceMonitoring();
   }
 
   private loadDevices() {
@@ -133,6 +138,11 @@ export class GhostMeshNetwork {
 
   private updateDevices(newDevices: any[]) {
     newDevices.forEach(newDevice => {
+      // Track BLE device count separately
+      if (newDevice.totalCount !== undefined) {
+        this.bleDeviceCount = newDevice.totalCount;
+      }
+
       const existing = this.devices.find(d => d.id === newDevice.id);
       if (existing) {
         existing.connected = newDevice.connected;
@@ -212,6 +222,11 @@ export class GhostMeshNetwork {
       this.reconnectTimeout = null;
     }
 
+    if (this.performanceInterval) {
+      clearInterval(this.performanceInterval);
+      this.performanceInterval = null;
+    }
+
     if (this.ws) {
       this.sendCommand({ type: 'disconnect' });
       this.ws.close();
@@ -225,5 +240,36 @@ export class GhostMeshNetwork {
 
   isMeshActive(): boolean {
     return this.meshActive;
+  }
+
+  private startPerformanceMonitoring() {
+    // Sample BLE device count every 10 seconds
+    this.performanceInterval = setInterval(() => {
+      const dataPoint = {
+        timestamp: Date.now(),
+        bleDeviceCount: this.bleDeviceCount,
+      };
+
+      this.performanceData.push(dataPoint);
+
+      // Keep only last 60 samples (10 minutes of data)
+      if (this.performanceData.length > 60) {
+        this.performanceData.shift();
+      }
+
+      this.onPerformanceUpdate?.(this.performanceData);
+    }, 10000); // 10 seconds
+  }
+
+  setOnPerformanceUpdate(callback: (data: Array<{ timestamp: number; bleDeviceCount: number }>) => void) {
+    this.onPerformanceUpdate = callback;
+    // Send initial data
+    if (this.performanceData.length > 0) {
+      callback(this.performanceData);
+    }
+  }
+
+  getPerformanceData(): Array<{ timestamp: number; bleDeviceCount: number }> {
+    return this.performanceData;
   }
 }

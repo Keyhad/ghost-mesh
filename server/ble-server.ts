@@ -7,6 +7,7 @@
 import { WebSocketServer, WebSocket } from 'ws';
 import { MeshNode } from '../src/mesh';
 import { Message } from '../src/protocol';
+import { logger } from '../src/logger';
 
 const PORT = process.env.WS_PORT ? parseInt(process.env.WS_PORT) : 8080;
 
@@ -31,10 +32,10 @@ class BLEServer {
 
   constructor(port: number) {
     this.wss = new WebSocketServer({ port });
-    console.log(`🔷 BLE WebSocket Server listening on ws://localhost:${port}`);
+    logger.success(`BLE WebSocket Server listening on ws://localhost:${port}`);
 
     this.wss.on('connection', (ws: WebSocket) => {
-      console.log('📱 Web client connected');
+      logger.connection('Web client connected');
       this.clients.add(ws);
 
       ws.on('message', async (data: Buffer) => {
@@ -42,32 +43,32 @@ class BLEServer {
           const command: ClientCommand = JSON.parse(data.toString());
           await this.handleCommand(ws, command);
         } catch (error) {
-          console.error('Error handling command:', error);
+          logger.error('Error handling command:', error);
           this.sendError(ws, 'Invalid command format');
         }
       });
 
       ws.on('close', () => {
-        console.log('📱 Web client disconnected');
+        logger.connection('Web client disconnected');
         this.clients.delete(ws);
 
         // If no clients left, stop mesh node
         if (this.clients.size === 0 && this.meshNode) {
-          console.log('🛑 No clients connected, stopping BLE mesh...');
+          logger.info('No clients connected, stopping BLE mesh...');
           this.meshNode.stop();
           this.meshNode = null;
         }
       });
 
       ws.on('error', (error) => {
-        console.error('WebSocket error:', error);
+        logger.error('WebSocket error:', error);
         this.clients.delete(ws);
       });
     });
   }
 
   private async handleCommand(ws: WebSocket, command: ClientCommand) {
-    console.log('📨 Received command:', command.type);
+    logger.debug('Received command:', command.type);
 
     switch (command.type) {
       case 'init':
@@ -118,25 +119,25 @@ class BLEServer {
         await this.meshNode.stop();
       }
 
-      console.log(`🚀 Starting BLE mesh node for ${phoneNumber}...`);
+      logger.info(`Starting BLE mesh node for ${phoneNumber}...`);
       this.meshNode = new MeshNode(phoneNumber);
 
       // Set up event listeners
       this.meshNode.on('started', (data) => {
-        console.log('✅ BLE mesh node started:', data);
+        logger.success('BLE mesh node started:', data);
         this.broadcast({ type: 'connected' });
       });
 
       this.meshNode.on('deviceDiscovered', (device) => {
-        console.log('📡 Device discovered:', device.id);
+        logger.ble('Device discovered:', device.id, 'Total:', device.totalCount);
         this.broadcast({
           type: 'device_update',
-          devices: [device],
+          devices: [{ id: device.id, totalCount: device.totalCount, connected: false, lastSeen: Date.now() }],
         });
       });
 
       this.meshNode.on('messageReceived', (message: Message) => {
-        console.log('📬 Message received:', message.id);
+        logger.message('Message received:', message.id);
         this.broadcast({
           type: 'message_received',
           message,
@@ -144,7 +145,7 @@ class BLEServer {
       });
 
       this.meshNode.on('messageSent', (message: Message) => {
-        console.log('📤 Message sent:', message.id);
+        logger.message('Message sent:', message.id);
         this.broadcast({
           type: 'message_sent',
           message,
@@ -152,7 +153,7 @@ class BLEServer {
       });
 
       this.meshNode.on('error', (error) => {
-        console.error('❌ Mesh node error:', error);
+        logger.error('Mesh node error:', error);
         this.broadcast({
           type: 'error',
           error: error.message || 'Unknown mesh error',
@@ -163,7 +164,7 @@ class BLEServer {
       await this.meshNode.start();
 
     } catch (error: any) {
-      console.error('Failed to initialize mesh node:', error);
+      logger.error('Failed to initialize mesh node:', error);
       this.sendError(ws, `Failed to start BLE: ${error.message}`);
     }
   }
@@ -193,11 +194,11 @@ const server = new BLEServer(PORT);
 
 // Handle process signals
 process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down BLE server...');
+  logger.info('\nShutting down BLE server...');
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\n🛑 Shutting down BLE server...');
+  logger.info('\nShutting down BLE server...');
   process.exit(0);
 });
