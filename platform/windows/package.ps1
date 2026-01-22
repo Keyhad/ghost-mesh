@@ -47,7 +47,7 @@ if (Test-Path $PackagePath) {
     Remove-Item -Path $PackagePath -Recurse -Force
 }
 New-Item -Path $PackagePath -ItemType Directory -Force | Out-Null
-Write-Success "  ✓ Package directory prepared"
+Write-Success "  - Package directory prepared"
 
 # Copy build output
 Write-Info "[2/4] Copying application files..."
@@ -81,7 +81,7 @@ if (Test-Path $ZipPath) {
 }
 
 Compress-Archive -Path "$PackagePath\*" -DestinationPath $ZipPath -CompressionLevel Optimal
-Write-Success "  ✓ Package compressed"
+Write-Success "  - Package compressed"
 
 # Calculate package size
 $PackageSize = [math]::Round((Get-Item $ZipPath).Length / 1MB, 2)
