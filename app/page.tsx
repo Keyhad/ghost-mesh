@@ -156,26 +156,26 @@ export default function Home() {
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-md">
                 <span className="material-symbols-rounded text-xl leading-none">hub</span>
-              </div>
-              <div>
                 <h1 className="text-xl font-bold text-gray-900 dark:text-white leading-none">GhostMesh</h1>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{myPhone}</p>
               </div>
+            </div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              {myPhone}
             </div>
             <div className="flex items-center gap-3">
               {/* Bluetooth Beacon */}
               <div className="relative">
-                <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                  <span className="material-symbols-rounded text-blue-600 dark:text-blue-400 text-xl leading-none">bluetooth</span>
-                </div>
                 {meshActive && (
                   <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white dark:border-zinc-900 animate-pulse" />
                 )}
+                <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                  <span className="material-symbols-rounded text-blue-600 dark:text-blue-400 text-xl leading-none">bluetooth</span>
+                </div>
               </div>
               <StatusBadge connected={meshActive} />
-              <div className="px-3 py-1.5 rounded-full bg-gray-100 dark:bg-zinc-800 flex items-center">
-                <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 leading-none">{connectedCount} peers</span>
-              </div>
+            </div>
+            <div className="px-3 py-1.5 rounded-full bg-gray-100 dark:bg-zinc-800 flex items-center">
+              <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 leading-none">{connectedCount} peers</span>
             </div>
           </div>
         </div>
