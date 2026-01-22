@@ -29,13 +29,13 @@ export const DashboardCard = ({
         onClick={onToggle}
         className="w-full p-6 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition"
       >
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center">
+        <div className="flex items-start gap-3">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center flex-shrink-0">
             <span className="material-symbols-rounded text-2xl leading-none">dashboard</span>
           </div>
-          <div className="text-left">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white leading-none">Dashboard</h2>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          <div className="flex flex-col justify-center">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white leading-tight">Dashboard</h2>
+            <p className="text-xs text-gray-500 dark:text-gray-400 leading-tight mt-0.5">
               {connectedCount} peers • {messages.length} messages
             </p>
           </div>

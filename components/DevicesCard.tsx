@@ -13,13 +13,13 @@ export const DevicesCard = ({ isExpanded, onToggle, devices }: DevicesCardProps)
         onClick={onToggle}
         className="w-full p-6 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition"
       >
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 text-white flex items-center justify-center">
+        <div className="flex items-start gap-3">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 text-white flex items-center justify-center flex-shrink-0">
             <span className="material-symbols-rounded text-2xl leading-none">devices</span>
           </div>
-          <div className="text-left">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white leading-none">BLE Devices</h2>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          <div className="flex flex-col justify-center">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white leading-tight">BLE Devices</h2>
+            <p className="text-xs text-gray-500 dark:text-gray-400 leading-tight mt-0.5">
               {devices.length} devices discovered
             </p>
           </div>
@@ -38,7 +38,7 @@ export const DevicesCard = ({ isExpanded, onToggle, devices }: DevicesCardProps)
           {/* Device List */}
           <div className="p-5 rounded-2xl bg-gray-50 dark:bg-zinc-800/50">
             <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-4">Discovered Devices</h3>
-            <div className="space-y-2">
+            <div className="divide-y divide-gray-200 dark:divide-zinc-700">
               {devices.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12">
                   <div className="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-zinc-800 flex items-center justify-center mb-4">
@@ -55,19 +55,19 @@ export const DevicesCard = ({ isExpanded, onToggle, devices }: DevicesCardProps)
                 devices.map((device) => (
                   <div
                     key={device.id}
-                    className="p-4 rounded-xl bg-white dark:bg-zinc-700/50 hover:bg-gray-50 dark:hover:bg-zinc-700 transition"
+                    className="py-4 first:pt-0 last:pb-0 hover:bg-gray-50/50 dark:hover:bg-zinc-700/30 transition px-2 -mx-2 rounded-lg"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-100 to-amber-100 dark:from-orange-900/30 dark:to-amber-900/30 text-orange-600 dark:text-orange-400 flex items-center justify-center">
-                          <span className="material-symbols-rounded text-lg leading-none">bluetooth</span>
+                          {/* <span className="material-symbols-rounded text-lg leading-none">bluetooth</span> */}
                         </div>
                         <div>
                           <p className="text-sm font-mono font-semibold text-gray-700 dark:text-gray-300 truncate max-w-[200px]">
-                            {device.id}
+                            id: {device.id}
                           </p>
                           <p className="text-xs text-gray-500 dark:text-gray-400">
-                            {device.peerId}
+                            pid: {device.peerId}
                           </p>
                         </div>
                       </div>

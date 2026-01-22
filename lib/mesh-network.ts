@@ -252,8 +252,8 @@ export class GhostMeshNetwork {
 
       this.performanceData.push(dataPoint);
 
-      // Keep only last 60 samples (10 minutes of data)
-      if (this.performanceData.length > 60) {
+      // Keep only last 18 samples (3 minutes of data)
+      if (this.performanceData.length > 18) {
         this.performanceData.shift();
       }
 
