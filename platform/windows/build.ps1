@@ -103,6 +103,7 @@ $FilesToCopy = @(
     @{ Source = ".next"; Destination = ".next" }
     @{ Source = "dist"; Destination = "dist" }
     @{ Source = "public"; Destination = "public" }
+    @{ Source = "node_modules"; Destination = "node_modules" }
     @{ Source = "package.json"; Destination = "package.json" }
     @{ Source = "next.config.js"; Destination = "next.config.js" }
 )
@@ -169,12 +170,13 @@ try {
 Set-Content -Path (Join-Path $OutDir "run.ps1") -Value $RunScript
 Write-Success "  - Created run.ps1"
 
-# Create install-production.ps1
+# Create install-production.ps1 (for reference only - dependencies are bundled)
 $InstallScript = @"
-# GhostMesh Production Dependencies Installer
-Write-Host "Installing production dependencies..." -ForegroundColor Cyan
-npm install --omit=dev
-Write-Host "Dependencies installed successfully!" -ForegroundColor Green
+# GhostMesh Production Dependencies
+# Note: Dependencies are already included in this package.
+# This script is provided for reference only.
+Write-Host "Dependencies are already bundled with this package." -ForegroundColor Green
+Write-Host "No installation needed. You can run the application directly." -ForegroundColor Cyan
 "@
 
 Set-Content -Path (Join-Path $OutDir "install-production.ps1") -Value $InstallScript
@@ -186,10 +188,7 @@ $ReadmeContent = @"
 
 ## Installation
 
-1. Install Node.js (v18 or higher) from https://nodejs.org/
-2. Run install-production.ps1 to install dependencies:
-   ``````powershell
-   .\install-production.ps1
+1. Dependencies are already bundled - no installation needed!all-production.ps1
    ``````
 
 ## Running
@@ -250,3 +249,6 @@ Write-Info "1. Navigate to: cd platform\windows\out"
 Write-Info "2. Install dependencies: .\install-production.ps1"
 Write-Info "3. Run application: .\run.ps1"
 Write-Info ""
+Run application: .\run.ps1"
+Write-Info ""
+Write-Info "Note: Dependencies are bundled (node_modules included)

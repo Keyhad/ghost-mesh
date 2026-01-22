@@ -95,8 +95,9 @@ Write-Info "Size: $PackageSize MB"
 Write-Info ""
 Write-Info "Distribution instructions:"
 Write-Info "1. Extract the zip file"
-Write-Info "2. Run install-production.ps1 to install dependencies"
-Write-Info "3. Double-click GhostMesh.bat or run run.ps1"
+Write-Info "2. Double-click GhostMesh.bat or run run.ps1"
+Write-Info ""
+Write-Info "Note: Works completely offline - all dependencies bundled"
 Write-Info ""
 
 # Create installer if requested
