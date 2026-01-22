@@ -1,0 +1,10 @@
+# Build output
+out/
+packages/
+
+# Temporary files
+*.tmp
+*.log
+
+# Test deployments
+test-deploy/
