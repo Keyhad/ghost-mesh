@@ -1,4 +1,5 @@
 import { Contact } from '@/lib/types';
+import { CardHeader } from './CardHeader';
 
 interface ContactsCardProps {
   isExpanded: boolean;
@@ -21,27 +22,15 @@ export const ContactsCard = ({
 }: ContactsCardProps) => {
   return (
     <div className="rounded-3xl bg-white/80 dark:bg-zinc-900/50 shadow-lg shadow-black/5 backdrop-blur-xl overflow-hidden">
-      <button
-        onClick={onToggle}
-        className="w-full p-6 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition"
-      >
-        <div className="flex items-start gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 text-white flex items-center justify-center flex-shrink-0">
-            <span className="material-symbols-rounded text-2xl leading-none">contacts</span>
-          </div>
-          <div className="flex flex-col justify-center">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white leading-tight">Contacts</h2>
-            <p className="text-xs text-gray-500 dark:text-gray-400 leading-tight mt-0.5">{contacts.length} contacts saved</p>
-          </div>
-        </div>
-        <span
-          className={`material-symbols-rounded text-gray-400 transition-transform leading-none ${
-            isExpanded ? 'rotate-180' : ''
-          }`}
-        >
-          expand_more
-        </span>
-      </button>
+      <CardHeader
+        icon="contacts"
+        title="Contacts"
+        subtitle={`${contacts.length} contacts saved`}
+        gradientFrom="from-purple-500"
+        gradientTo="to-pink-600"
+        isExpanded={isExpanded}
+        onToggle={onToggle}
+      />
 
       {isExpanded && (
         <div className="p-6 pt-0">

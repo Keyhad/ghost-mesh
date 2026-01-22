@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { CardHeader } from './CardHeader';
 
 interface PerformanceData {
   timestamp: number;
@@ -153,29 +154,15 @@ export const PerMonCard = ({ isExpanded, onToggle, performanceData }: PerMonCard
 
   return (
     <div className="rounded-3xl bg-white/80 dark:bg-zinc-900/50 shadow-lg shadow-black/5 backdrop-blur-xl overflow-hidden">
-      <button
-        onClick={onToggle}
-        className="w-full p-6 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition"
-      >
-        <div className="flex items-start gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center flex-shrink-0">
-            <span className="material-symbols-rounded text-2xl leading-none">monitoring</span>
-          </div>
-          <div className="flex flex-col justify-center">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white leading-tight">Performance Monitor</h2>
-            <p className="text-xs text-gray-500 dark:text-gray-400 leading-tight mt-0.5">
-              {currentCount} BLE devices • {performanceData.length} samples
-            </p>
-          </div>
-        </div>
-        <span
-          className={`material-symbols-rounded text-gray-400 transition-transform leading-none ${
-            isExpanded ? 'rotate-180' : ''
-          }`}
-        >
-          expand_more
-        </span>
-      </button>
+      <CardHeader
+        icon="monitoring"
+        title="Performance Monitor"
+        subtitle={`${currentCount} BLE devices • ${performanceData.length} samples`}
+        gradientFrom="from-emerald-500"
+        gradientTo="to-teal-600"
+        isExpanded={isExpanded}
+        onToggle={onToggle}
+      />
 
       {isExpanded && (
         <div className="px-6 pb-6 space-y-6">
