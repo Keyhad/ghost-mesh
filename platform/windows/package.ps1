@@ -68,11 +68,7 @@ Set-Content -Path (Join-Path $PackagePath "version.json") -Value $VersionInfo
 Write-Success "  - Version info created"
 
 # Create launcher batch file for easier startup
-$LauncherBatch = @"
-@echo off
-echo Starting GhostMesh...
-powershell -ExecutionPolicy Bypass -File "%~dp0run.ps1"
-"@
+$LauncherBatch = '@echo off' + "`r`n" + 'echo Starting GhostMesh...' + "`r`n" + 'powershell -ExecutionPolicy Bypass -File "%~dp0run.ps1"'
 
 Set-Content -Path (Join-Path $PackagePath "GhostMesh.bat") -Value $LauncherBatch
 Write-Success "  - Launcher created"
