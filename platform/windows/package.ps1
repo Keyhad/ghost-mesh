@@ -15,7 +15,7 @@ $ProgressPreference = "SilentlyContinue"
 function Write-Success { Write-Host $args -ForegroundColor Green }
 function Write-Info { Write-Host $args -ForegroundColor Cyan }
 function Write-Warning { Write-Host $args -ForegroundColor Yellow }
-function Write-Error { Write-Host $args -ForegroundColor Red }
+function Write-ErrorMsg { Write-Host $args -ForegroundColor Red }
 
 $ScriptRoot = Split-Path -Parent $PSCommandPath
 $ProjectRoot = Resolve-Path "$ScriptRoot\..\.."
@@ -33,7 +33,7 @@ Write-Info ""
 
 # Check if build output exists
 if (!(Test-Path $OutDir)) {
-    Write-Error "Build output not found. Please run build.ps1 first."
+    Write-ErrorMsg "Build output not found. Please run build.ps1 first."
     exit 1
 }
 
@@ -52,19 +52,20 @@ Write-Success "  ✓ Package directory prepared"
 # Copy build output
 Write-Info "[2/4] Copying application files..."
 Copy-Item -Path "$OutDir\*" -Destination $PackagePath -Recurse -Force
-Write-Success "  ✓ Application files copied"
+Write-Success "  - Application files copied"
 
 # Create version info
 Write-Info "[3/4] Creating version info..."
+$arch = if ([System.Environment]::Is64BitOperatingSystem) { "x64" } else { "x86" }
 $VersionInfo = @{
     version = $Version
     buildDate = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
     platform = "Windows"
-    architecture = [System.Environment]::Is64BitOperatingSystem ? "x64" : "x86"
+    architecture = $arch
 } | ConvertTo-Json
 
 Set-Content -Path (Join-Path $PackagePath "version.json") -Value $VersionInfo
-Write-Success "  ✓ Version info created"
+Write-Success "  - Version info created"
 
 # Create launcher batch file for easier startup
 $LauncherBatch = @"
@@ -74,7 +75,7 @@ powershell -ExecutionPolicy Bypass -File "%~dp0run.ps1"
 "@
 
 Set-Content -Path (Join-Path $PackagePath "GhostMesh.bat") -Value $LauncherBatch
-Write-Success "  ✓ Launcher created"
+Write-Success "  - Launcher created"
 
 # Compress package
 Write-Info "[4/4] Creating zip archive..."
