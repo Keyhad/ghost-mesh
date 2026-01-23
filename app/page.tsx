@@ -11,8 +11,9 @@ import { ContactsCard } from '@/components/ContactsCard';
 import { ChatsCard } from '@/components/ChatsCard';
 import { PerMonCard } from '@/components/PerMonCard';
 import { DevicesCard } from '@/components/DevicesCard';
+import { SignalHistogramCard } from '@/components/SignalHistogramCard';
 
-type TabKey = 'dashboard' | 'contacts' | 'chats' | 'permon' | 'devices';
+type TabKey = 'dashboard' | 'contacts' | 'chats' | 'permon' | 'devices' | 'signal';
 
 export default function Home() {
   const [myPhone, setMyPhone] = useState<string>('');
@@ -199,6 +200,12 @@ export default function Home() {
           isExpanded={expandedSections.has('permon')}
           onToggle={() => toggleSection('permon')}
           performanceData={performanceData}
+        />
+
+        <SignalHistogramCard
+          isExpanded={expandedSections.has('signal')}
+          onToggle={() => toggleSection('signal')}
+          devices={devices}
         />
 
         <DevicesCard

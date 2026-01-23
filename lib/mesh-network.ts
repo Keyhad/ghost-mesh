@@ -171,16 +171,20 @@ export class GhostMeshNetwork {
 
   private updateSingleDevice(deviceData: any) {
     const existing = this.devices.find(d => d.id === deviceData.id);
-    
+
     if (existing) {
       existing.connected = deviceData.isActive || false;
       existing.lastSeen = deviceData.lastSeen || Date.now();
+      existing.rssi = deviceData.rssi;
+      existing.activityCount = deviceData.activityCount;
     } else if (deviceData.status !== 'removed') {
       this.devices.push({
         id: deviceData.id,
         peerId: deviceData.id,
         lastSeen: deviceData.lastSeen || Date.now(),
         connected: deviceData.isActive || false,
+        rssi: deviceData.rssi,
+        activityCount: deviceData.activityCount,
       });
     }
 
@@ -195,6 +199,8 @@ export class GhostMeshNetwork {
       peerId: d.id,
       lastSeen: d.lastSeen || Date.now(),
       connected: d.isActive || false,
+      rssi: d.rssi,
+      activityCount: d.activityCount,
     }));
 
     storage.updateDevices(this.devices);

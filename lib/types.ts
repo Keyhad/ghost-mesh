@@ -13,6 +13,8 @@ export interface Device {
   peerId: string; // WebRTC peer ID
   lastSeen: number;
   connected: boolean;
+  rssi?: number; // Signal strength (Received Signal Strength Indicator)
+  activityCount?: number; // Number of times device has been seen
 }
 
 export interface Contact {
