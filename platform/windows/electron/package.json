@@ -1,0 +1,70 @@
+{
+    "name":  "ghostmesh-electron",
+    "version":  "1.0.0",
+    "description":  "GhostMesh Desktop Application",
+    "main":  "main.js",
+    "author":  "GhostMesh",
+    "license":  "ISC",
+    "scripts":  {
+                    "start":  "electron .",
+                    "build:installer":  "electron-builder --win nsis",
+                    "build:portable":  "electron-builder --win portable",
+                    "build:all":  "electron-builder --win"
+                },
+    "build":  {
+                  "appId":  "com.ghostmesh.app",
+                  "productName":  "GhostMesh",
+                  "directories":  {
+                                      "output":  "dist"
+                                  },
+                  "files":  [
+                                "main.js",
+                                "../../../dist/**/*",
+                                "../../../.next/**/*",
+                                "../../../public/**/*",
+                                "../../../node_modules/**/*",
+                                "../../../package.json",
+                                "../../../next.config.js"
+                            ],
+                  "extraResources":  [
+                                         {
+                                             "from":  "../../../node_modules",
+                                             "to":  "app/node_modules",
+                                             "filter":  [
+                                                            "**/*"
+                                                        ]
+                                         }
+                                     ],
+                  "win":  {
+                              "target":  [
+                                             {
+                                                 "target":  "nsis",
+                                                 "arch":  [
+                                                              "x64"
+                                                          ]
+                                             },
+                                             {
+                                                 "target":  "portable",
+                                                 "arch":  [
+                                                              "x64"
+                                                          ]
+                                             }
+                                         ],
+                              "icon":  "../../../public/icon.ico"
+                          },
+                  "nsis":  {
+                               "oneClick":  false,
+                               "allowToChangeInstallationDirectory":  true,
+                               "createDesktopShortcut":  true,
+                               "createStartMenuShortcut":  true,
+                               "shortcutName":  "GhostMesh"
+                           },
+                  "portable":  {
+                                   "artifactName":  "GhostMesh-Portable-${version}.exe"
+                               }
+              },
+    "devDependencies":  {
+                            "electron":  "^28.1.0",
+                            "electron-builder":  "^24.9.1"
+                        }
+}
