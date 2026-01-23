@@ -8,12 +8,12 @@ import { Card } from '@/components/Card';
 import { StatusBadge } from '@/components/StatusBadge';
 import { DashboardCard } from '@/components/DashboardCard';
 import { ContactsCard } from '@/components/ContactsCard';
-import { ChatsCard } from '@/components/ChatsCard';
+import { ConversationCard } from '@/components/ConversationCard';
 import { PerMonCard } from '@/components/PerMonCard';
 import { DevicesCard } from '@/components/DevicesCard';
 import { SignalHistogramCard } from '@/components/SignalHistogramCard';
 
-type TabKey = 'dashboard' | 'contacts' | 'chats' | 'permon' | 'devices' | 'signal';
+type TabKey = 'dashboard' | 'contacts' | 'chats' | 'permon' | 'devices' | 'signal' | string;
 
 export default function Home() {
   const [myPhone, setMyPhone] = useState<string>('');
@@ -21,8 +21,7 @@ export default function Home() {
   const [isSetup, setIsSetup] = useState(false);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [newContact, setNewContact] = useState({ name: '', phoneNumber: '' });
-  const [selectedContact, setSelectedContact] = useState<string>('');
-  const [messageText, setMessageText] = useState<string>('');
+  const [messageText, setMessageText] = useState<{ [key: string]: string }>({});
   const [messages, setMessages] = useState<Message[]>([]);
   const [devices, setDevices] = useState<Device[]>([]);
   const [network, setNetwork] = useState<GhostMeshNetwork | null>(null);
@@ -78,6 +77,20 @@ export default function Home() {
     initNetwork(phoneInput);
   };
 
+  const updatePhone = (newPhone: string) => {
+    if (!newPhone.trim() || newPhone === myPhone) return;
+
+    // Disconnect existing network
+    if (network) {
+      network.disconnect();
+    }
+
+    // Update phone and reinitialize
+    storage.setMyPhone(newPhone);
+    setMyPhone(newPhone);
+    initNetwork(newPhone);
+  };
+
   const addContact = () => {
     if (!newContact.name || !newContact.phoneNumber) return;
     const updated = [...contacts, newContact];
@@ -86,10 +99,11 @@ export default function Home() {
     setNewContact({ name: '', phoneNumber: '' });
   };
 
-  const sendMessage = () => {
-    if (!selectedContact || !messageText.trim() || !network) return;
-    network.sendMessage(selectedContact, messageText);
-    setMessageText('');
+  const sendMessage = (contactPhone: string) => {
+    const text = messageText[contactPhone];
+    if (!text?.trim() || !network) return;
+    network.sendMessage(contactPhone, text);
+    setMessageText(prev => ({ ...prev, [contactPhone]: '' }));
     setMessages(storage.getMessages());
   };
 
@@ -107,6 +121,30 @@ export default function Home() {
     () => messages.slice(-5).reverse(),
     [messages]
   );
+
+  // Group messages by conversation (unique sender/receiver pairs)
+  const conversations = useMemo(() => {
+    const convMap = new Map<string, Message[]>();
+
+    messages.forEach(msg => {
+      // Determine the other party (not myPhone)
+      const otherParty = msg.srcId === myPhone ? msg.destId : msg.srcId;
+
+      if (!convMap.has(otherParty)) {
+        convMap.set(otherParty, []);
+      }
+      convMap.get(otherParty)!.push(msg);
+    });
+
+    // Convert to array and sort by latest message timestamp
+    return Array.from(convMap.entries())
+      .map(([phone, msgs]) => ({
+        phone,
+        messages: msgs.sort((a, b) => a.timestamp - b.timestamp),
+        latestTimestamp: Math.max(...msgs.map(m => m.timestamp))
+      }))
+      .sort((a, b) => b.latestTimestamp - a.latestTimestamp);
+  }, [messages, myPhone]);
 
   if (!isSetup) {
     return (
@@ -157,11 +195,13 @@ export default function Home() {
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-md">
                 <span className="material-symbols-rounded text-xl leading-none">hub</span>
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white leading-none">GhostMesh</h1>
               </div>
-            </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              {myPhone}
+              <div>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white leading-none">GhostMesh</h1>
+                <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {myPhone}
+                </div>
+              </div>
             </div>
             <div className="flex items-center gap-3">
               {/* Bluetooth Beacon */}
@@ -174,9 +214,9 @@ export default function Home() {
                 </div>
               </div>
               <StatusBadge connected={meshActive} />
-            </div>
-            <div className="px-3 py-1.5 rounded-full bg-gray-100 dark:bg-zinc-800 flex items-center">
-              <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 leading-none">{connectedCount} peers</span>
+              <div className="px-3 py-1.5 rounded-full bg-gray-100 dark:bg-zinc-800 flex items-center">
+                <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 leading-none">{connectedCount} peers</span>
+              </div>
             </div>
           </div>
         </div>
@@ -194,6 +234,13 @@ export default function Home() {
           myPhone={myPhone}
           getContactName={getContactName}
           onViewAllChats={() => toggleSection('chats')}
+          onUpdatePhone={updatePhone}
+          onMessageClick={(senderPhone) => {
+            const chatKey = `chat-${senderPhone}`;
+            const newExpanded = new Set(expandedSections);
+            newExpanded.add(chatKey);
+            setExpandedSections(newExpanded);
+          }}
         />
 
         <PerMonCard
@@ -222,24 +269,28 @@ export default function Home() {
           onNewContactChange={setNewContact}
           onAddContact={addContact}
           onSelectContact={(phoneNumber) => {
-            setSelectedContact(phoneNumber);
-            toggleSection('chats');
+            const chatKey = `chat-${phoneNumber}`;
+            const newExpanded = new Set(expandedSections);
+            newExpanded.add(chatKey);
+            setExpandedSections(newExpanded);
           }}
         />
 
-        <ChatsCard
-          isExpanded={expandedSections.has('chats')}
-          onToggle={() => toggleSection('chats')}
-          contacts={contacts}
-          selectedContact={selectedContact}
-          onSelectContact={setSelectedContact}
-          messages={messages}
-          messageText={messageText}
-          onMessageTextChange={setMessageText}
-          onSendMessage={sendMessage}
-          myPhone={myPhone}
-          getContactName={getContactName}
-        />
+        {/* Individual Conversation Cards - Sorted by latest message */}
+        {conversations.map(({ phone, messages: convMessages }) => (
+          <ConversationCard
+            key={phone}
+            contactPhone={phone}
+            contactName={getContactName(phone)}
+            messages={convMessages}
+            myPhone={myPhone}
+            isExpanded={expandedSections.has(`chat-${phone}`)}
+            onToggle={() => toggleSection(`chat-${phone}`)}
+            messageText={messageText[phone] || ''}
+            onMessageTextChange={(text) => setMessageText(prev => ({ ...prev, [phone]: text }))}
+            onSendMessage={() => sendMessage(phone)}
+          />
+        ))}
       </main>
     </div>
   );

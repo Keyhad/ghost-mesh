@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Device } from '@/lib/types';
 import { CardHeader } from './CardHeader';
+import { StatCard } from './StatCard';
 
 interface SignalHistogramCardProps {
   isExpanded: boolean;
@@ -308,7 +309,7 @@ export const SignalHistogramCard = ({ isExpanded, onToggle, devices }: SignalHis
     : 0;
 
   return (
-    <div className="rounded-3xl bg-white/80 dark:bg-zinc-900/50 shadow-lg shadow-black/5 backdrop-blur-xl overflow-hidden">
+    <div className="card-container bg-violet-50/80 dark:bg-violet-950/20 shadow-violet-500/5">
       <CardHeader
         icon="signal_cellular_alt"
         title="Signal Strength"
@@ -320,9 +321,9 @@ export const SignalHistogramCard = ({ isExpanded, onToggle, devices }: SignalHis
       />
 
       {isExpanded && (
-        <div className="px-6 pb-6 space-y-6">
+        <div className="card-content">
           {/* Histogram Canvas */}
-          <div className="p-5 rounded-2xl bg-gray-50 dark:bg-zinc-800/50">
+          <div className="card-section">
             <canvas
               ref={canvasRef}
               className="w-full"
@@ -331,79 +332,56 @@ export const SignalHistogramCard = ({ isExpanded, onToggle, devices }: SignalHis
           </div>
 
           {/* Signal Statistics */}
-          <div className="grid gap-4 sm:grid-cols-4">
-            <div className="p-5 rounded-2xl bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Median RSSI</p>
-                  <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{medianRssi} dBm</p>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 flex items-center justify-center">
-                  <span className="material-symbols-rounded leading-none">show_chart</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Average RSSI</p>
-                  <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{averageRssi} dBm</p>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                  <span className="material-symbols-rounded leading-none">graphic_eq</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-5 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Strongest</p>
-                  <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{strongestSignal} dBm</p>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                  <span className="material-symbols-rounded leading-none">signal_cellular_alt</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-5 rounded-2xl bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-950/30 dark:to-rose-950/30">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Weakest</p>
-                  <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{weakestSignal} dBm</p>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center">
-                  <span className="material-symbols-rounded leading-none">signal_cellular_0_bar</span>
-                </div>
-              </div>
-            </div>
+          <div className="card-grid card-grid-4">
+            <StatCard
+              label="Median RSSI"
+              value={`${medianRssi} dBm`}
+              icon="show_chart"
+              colorScheme="violet"
+            />
+            <StatCard
+              label="Average RSSI"
+              value={`${averageRssi} dBm`}
+              icon="graphic_eq"
+              colorScheme="emerald"
+            />
+            <StatCard
+              label="Strongest"
+              value={`${strongestSignal} dBm`}
+              icon="signal_cellular_alt"
+              colorScheme="blue"
+            />
+            <StatCard
+              label="Weakest"
+              value={`${weakestSignal} dBm`}
+              icon="signal_cellular_0_bar"
+              colorScheme="red"
+            />
           </div>
 
           {/* Signal Legend */}
-          <div className="p-5 rounded-2xl bg-gray-50 dark:bg-zinc-800/50">
-            <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">Signal Strength Guide</h3>
-            <div className="space-y-2">
-              <div className="flex items-center gap-3">
-                <div className="w-4 h-4 rounded bg-emerald-500"></div>
-                <span className="text-sm text-gray-700 dark:text-gray-300">Excellent (-30 to -50 dBm) - Very close, strong signal</span>
+          <div className="card-section">
+            <h3 className="section-heading mb-3">Signal Strength Guide</h3>
+            <div className="flex-col-gap">
+              <div className="legend-item">
+                <div className="legend-color" style={{backgroundColor: '#10b981'}}></div>
+                <span className="text-body-secondary">Excellent (-30 to -50 dBm) - Very close, strong signal</span>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-4 h-4 rounded bg-blue-500"></div>
-                <span className="text-sm text-gray-700 dark:text-gray-300">Good (-50 to -60 dBm) - Close proximity, good connection</span>
+              <div className="legend-item">
+                <div className="legend-color" style={{backgroundColor: '#3b82f6'}}></div>
+                <span className="text-body-secondary">Good (-50 to -60 dBm) - Close proximity, good connection</span>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-4 h-4 rounded bg-amber-500"></div>
-                <span className="text-sm text-gray-700 dark:text-gray-300">Fair (-60 to -70 dBm) - Medium distance, acceptable</span>
+              <div className="legend-item">
+                <div className="legend-color" style={{backgroundColor: '#f59e0b'}}></div>
+                <span className="text-body-secondary">Fair (-60 to -70 dBm) - Medium distance, acceptable</span>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-4 h-4 rounded bg-red-500"></div>
-                <span className="text-sm text-gray-700 dark:text-gray-300">Weak (-70 to -80 dBm) - Far away, unstable</span>
+              <div className="legend-item">
+                <div className="legend-color" style={{backgroundColor: '#ef4444'}}></div>
+                <span className="text-body-secondary">Weak (-70 to -80 dBm) - Far away, unstable</span>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-4 h-4 rounded bg-red-900"></div>
-                <span className="text-sm text-gray-700 dark:text-gray-300">Very Weak (&lt; -80 dBm) - At edge of range</span>
+              <div className="legend-item">
+                <div className="legend-color" style={{backgroundColor: '#991b1b'}}></div>
+                <span className="text-body-secondary">Very Weak (&lt; -80 dBm) - At edge of range</span>
               </div>
             </div>
           </div>

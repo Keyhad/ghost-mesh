@@ -1,0 +1,39 @@
+/* Design System Variables */
+
+@layer base {
+  :root {
+    /* Spacing */
+    --spacing-card: 1.5rem;
+    --spacing-section: 1.25rem;
+    --spacing-field: 1rem;
+
+    /* Border Radius */
+    --radius-card: 1.5rem;
+    --radius-section: 1rem;
+    --radius-field: 1rem;
+    --radius-button: 0.75rem;
+
+    /* Shadows */
+    --shadow-card: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-button: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-button-hover: 0 10px 15px -3px rgb(59 130 246 / 0.3), 0 4px 6px -4px rgb(59 130 246 / 0.3);
+
+    /* Colors - Light mode */
+    --bg-card-section: 249 250 251;
+    --bg-field: 255 255 255;
+    --bg-button: 255 255 255;
+    --text-primary: 17 24 39;
+    --text-secondary: 107 114 128;
+    --text-label: 107 114 128;
+  }
+
+  .dark {
+    /* Colors - Dark mode */
+    --bg-card-section: 39 39 42;
+    --bg-field: 39 39 42;
+    --bg-button: 63 63 70;
+    --text-primary: 255 255 255;
+    --text-secondary: 156 163 175;
+    --text-label: 156 163 175;
+  }
+}

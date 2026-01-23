@@ -1,0 +1,55 @@
+/* Contact Components */
+
+@layer components {
+  /* Avatar circle */
+  .avatar {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    background-image: linear-gradient(to bottom right, rgb(59 130 246), rgb(124 58 237));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgb(255 255 255);
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  /* Contact avatar */
+  .contact-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-button);
+    background-image: linear-gradient(to bottom right, rgb(124 58 237), rgb(192 38 211));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgb(255 255 255);
+    font-size: 0.875rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* Contact info */
+  .contact-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .contact-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgb(var(--text-primary));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .contact-phone {
+    font-size: 0.75rem;
+    color: rgb(var(--text-secondary));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

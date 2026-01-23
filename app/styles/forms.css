@@ -1,0 +1,85 @@
+/* Form Components */
+
+@layer components {
+  /* Field boxes (like StatCard and InputField) */
+  .field-box {
+    padding: var(--spacing-field);
+    border-radius: var(--radius-field);
+    background-color: rgb(var(--bg-field));
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .field-box p {
+    margin: 0;
+  }
+
+  .field-box input {
+    font-family: inherit;
+  }
+
+  /* Clickable field box (for messages, etc) */
+  .field-box-clickable {
+    cursor: pointer;
+  }
+
+  .field-box-clickable:hover {
+    background-color: rgb(239 246 255);
+  }
+
+  .dark .field-box-clickable:hover {
+    background-color: rgb(30 58 138 / 0.1);
+  }
+
+  /* Input field standard style */
+  .input-field {
+    flex: 1;
+    padding: 0.625rem 1rem;
+    border-radius: var(--radius-button);
+    background-color: rgb(var(--bg-field));
+    outline: none;
+    font-size: 0.875rem;
+    color: rgb(var(--text-primary));
+  }
+
+  .input-field::placeholder {
+    color: rgb(var(--text-secondary));
+  }
+
+  /* Input container with icon */
+  .input-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: var(--radius-button);
+    background-color: rgb(var(--bg-field));
+    padding: 0.625rem 0.75rem;
+  }
+
+  .dark .input-with-icon {
+    background-color: rgb(63 63 70);
+  }
+
+  .input-with-icon input {
+    flex: 1;
+    background-color: transparent;
+    outline: none;
+    font-size: 0.875rem;
+    color: rgb(var(--text-primary));
+  }
+
+  .input-with-icon input::placeholder {
+    color: rgb(var(--text-secondary));
+  }
+
+  .input-with-icon .material-symbols-rounded {
+    color: rgb(156 163 175);
+    font-size: 1.125rem;
+  }
+}

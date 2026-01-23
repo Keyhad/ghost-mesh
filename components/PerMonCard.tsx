@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { CardHeader } from './CardHeader';
+import { StatCard } from './StatCard';
 
 interface PerformanceData {
   timestamp: number;
@@ -153,7 +154,7 @@ export const PerMonCard = ({ isExpanded, onToggle, performanceData }: PerMonCard
   const minCount = Math.min(...bleDeviceCounts, 0);
 
   return (
-    <div className="rounded-3xl bg-white/80 dark:bg-zinc-900/50 shadow-lg shadow-black/5 backdrop-blur-xl overflow-hidden">
+    <div className="card-container bg-cyan-50/80 dark:bg-cyan-950/20 shadow-cyan-500/5">
       <CardHeader
         icon="monitoring"
         title="Performance Monitor"
@@ -165,62 +166,39 @@ export const PerMonCard = ({ isExpanded, onToggle, performanceData }: PerMonCard
       />
 
       {isExpanded && (
-        <div className="px-6 pb-6 space-y-6">
+        <div className="card-content">
           {/* Stats Row */}
-          <div className="grid gap-4 sm:grid-cols-4">
-            <div className="p-5 rounded-2xl bg-gray-50 dark:bg-zinc-800/50">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Current</p>
-                  <p className="mt-1 text-xl font-bold text-gray-900 dark:text-white">{currentCount}</p>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                  <span className="material-symbols-rounded leading-none">sensors</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-5 rounded-2xl bg-gray-50 dark:bg-zinc-800/50">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Average</p>
-                  <p className="mt-1 text-xl font-bold text-gray-900 dark:text-white">{avgCount}</p>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                  <span className="material-symbols-rounded leading-none">speed</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-5 rounded-2xl bg-gray-50 dark:bg-zinc-800/50">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Peak</p>
-                  <p className="mt-1 text-xl font-bold text-gray-900 dark:text-white">{maxCount}</p>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-                  <span className="material-symbols-rounded leading-none">trending_up</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-5 rounded-2xl bg-gray-50 dark:bg-zinc-800/50">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Minimum</p>
-                  <p className="mt-1 text-xl font-bold text-gray-900 dark:text-white">{minCount}</p>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 flex items-center justify-center">
-                  <span className="material-symbols-rounded leading-none">trending_down</span>
-                </div>
-              </div>
-            </div>
+          <div className="card-grid card-grid-4">
+            <StatCard
+              label="Current"
+              value={currentCount}
+              icon="sensors"
+              colorScheme="emerald"
+            />
+            <StatCard
+              label="Average"
+              value={avgCount}
+              icon="speed"
+              colorScheme="blue"
+            />
+            <StatCard
+              label="Peak"
+              value={maxCount}
+              icon="trending_up"
+              colorScheme="purple"
+            />
+            <StatCard
+              label="Minimum"
+              value={minCount}
+              icon="trending_down"
+              colorScheme="red"
+            />
           </div>
 
           {/* Chart */}
-          <div className="p-5 rounded-2xl bg-gray-50 dark:bg-zinc-800/50">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-gray-900 dark:text-white">BLE Devices Over Time</h3>
+          <div className="card-section">
+            <div className="section-header">
+              <h3 className="section-heading">BLE Devices Over Time</h3>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600"></div>
                 <span className="text-xs text-gray-500 dark:text-gray-400">Active Devices</span>
@@ -228,14 +206,12 @@ export const PerMonCard = ({ isExpanded, onToggle, performanceData }: PerMonCard
             </div>
 
             {performanceData.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-20">
-                <div className="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-zinc-800 flex items-center justify-center mb-4">
-                  <span className="material-symbols-rounded text-2xl text-gray-300 dark:text-gray-700 leading-none">
-                    show_chart
-                  </span>
-                </div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">No performance data yet</p>
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Data will appear here once BLE scanning starts</p>
+              <div className="empty-state">
+                <span className="material-symbols-rounded empty-state-icon">
+                  show_chart
+                </span>
+                <p className="empty-state-text">No performance data yet</p>
+                <p className="empty-state-subtext">Data will appear here once BLE scanning starts</p>
               </div>
             ) : (
               <div className="relative">

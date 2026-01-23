@@ -1,0 +1,100 @@
+/* Button Components */
+
+@layer components {
+  /* Primary gradient button */
+  .btn-primary {
+    padding: 0.625rem 1.25rem;
+    border-radius: var(--radius-button);
+    background-image: linear-gradient(to right, rgb(37 99 235), rgb(79 70 229));
+    color: rgb(255 255 255);
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    box-shadow: var(--shadow-button-hover);
+  }
+
+  /* Secondary gradient button (violet/fuchsia) */
+  .btn-secondary {
+    padding: 0.625rem 1.25rem;
+    border-radius: var(--radius-button);
+    background-image: linear-gradient(to right, rgb(124 58 237), rgb(192 38 211));
+    color: rgb(255 255 255);
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    box-shadow: 0 10px 15px -3px rgb(124 58 237 / 0.3), 0 4px 6px -4px rgb(124 58 237 / 0.3);
+  }
+
+  /* Gradient button (violet/pink) - for add contact */
+  .btn-gradient-violet {
+    width: 100%;
+    padding: 0.625rem;
+    border-radius: var(--radius-button);
+    background-image: linear-gradient(to right, rgb(124 58 237), rgb(192 38 211));
+    color: rgb(255 255 255);
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+
+  .btn-gradient-violet:hover {
+    box-shadow: 0 10px 15px -3px rgb(124 58 237 / 0.3), 0 4px 6px -4px rgb(124 58 237 / 0.3);
+  }
+
+  /* Icon button */
+  .icon-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* Contact button */
+  .contact-btn {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: var(--radius-button);
+    transition: all 0.2s;
+    text-align: left;
+    background-color: rgb(var(--bg-button) / 0.5);
+  }
+
+  .contact-btn:hover {
+    background-color: rgb(var(--bg-button));
+  }
+
+  .contact-btn-active {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: var(--radius-button);
+    transition: all 0.2s;
+    text-align: left;
+    background-image: linear-gradient(to right, rgb(37 99 235), rgb(79 70 229));
+    color: rgb(255 255 255);
+    box-shadow: var(--shadow-button);
+  }
+
+  /* Contact item button */
+  .contact-item-btn {
+    padding: 0.75rem;
+    border-radius: var(--radius-button);
+    transition: all 0.2s;
+    text-align: left;
+    background-color: rgb(var(--bg-field));
+  }
+
+  .dark .contact-item-btn {
+    background-color: rgb(63 63 70 / 0.5);
+  }
+
+  .contact-item-btn:hover {
+    background-color: rgb(243 244 246);
+  }
+
+  .dark .contact-item-btn:hover {
+    background-color: rgb(63 63 70);
+  }
+}

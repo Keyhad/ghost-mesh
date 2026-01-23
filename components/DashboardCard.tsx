@@ -1,5 +1,8 @@
+import React from 'react';
 import { Message, Device } from '@/lib/types';
 import { CardHeader } from './CardHeader';
+import { StatCard } from './StatCard';
+import { InputField } from './InputField';
 
 interface DashboardCardProps {
   isExpanded: boolean;
@@ -11,6 +14,8 @@ interface DashboardCardProps {
   myPhone: string;
   getContactName: (phoneNumber: string) => string;
   onViewAllChats: () => void;
+  onUpdatePhone: (newPhone: string) => void;
+  onMessageClick: (senderPhone: string) => void;
 }
 
 export const DashboardCard = ({
@@ -23,9 +28,23 @@ export const DashboardCard = ({
   myPhone,
   getContactName,
   onViewAllChats,
+  onUpdatePhone,
+  onMessageClick,
 }: DashboardCardProps) => {
+  const [phoneInput, setPhoneInput] = React.useState(myPhone);
+
+  const handlePhoneChange = (value: string) => {
+    setPhoneInput(value);
+    if (value.trim() && value !== myPhone) {
+      onUpdatePhone(value.trim());
+    }
+  };
+
+  React.useEffect(() => {
+    setPhoneInput(myPhone);
+  }, [myPhone]);
   return (
-    <div className="rounded-3xl bg-white/80 dark:bg-zinc-900/50 shadow-lg shadow-black/5 backdrop-blur-xl overflow-hidden">
+    <div className="card-container bg-emerald-50/80 dark:bg-emerald-950/20 shadow-emerald-500/5">
       <CardHeader
         icon="dashboard"
         title="Dashboard"
@@ -37,83 +56,71 @@ export const DashboardCard = ({
       />
 
       {isExpanded && (
-        <div className="px-6 pb-6 space-y-6">
-          {/* Stats Row */}
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="p-5 rounded-2xl bg-gray-50 dark:bg-zinc-800/50">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Network</p>
-                  <p className="mt-1 text-xl font-bold text-gray-900 dark:text-white">
-                    {connectedCount > 0 ? 'Active' : 'Idle'}
-                  </p>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                  <span className="material-symbols-rounded leading-none">lan</span>
-                </div>
-              </div>
-            </div>
+        <div className="card-content">
+          {/* All Fields - Unified Grid */}
+          <div className="card-grid card-grid-4">
+            <InputField
+              icon="phone"
+              label="Phone Number"
+              value={phoneInput}
+              onChange={handlePhoneChange}
+              placeholder="+1234567890"
+              type="tel"
+              colorScheme="amber"
+            />
 
-            <div className="p-5 rounded-2xl bg-gray-50 dark:bg-zinc-800/50">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Peers</p>
-                  <p className="mt-1 text-xl font-bold text-gray-900 dark:text-white">{connectedCount}</p>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                  <span className="material-symbols-rounded leading-none">group</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-5 rounded-2xl bg-gray-50 dark:bg-zinc-800/50">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Messages</p>
-                  <p className="mt-1 text-xl font-bold text-gray-900 dark:text-white">{messages.length}</p>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-                  <span className="material-symbols-rounded leading-none">chat</span>
-                </div>
-              </div>
-            </div>
+            <StatCard
+              label="Network"
+              value={connectedCount > 0 ? 'Active' : 'Idle'}
+              icon="lan"
+              colorScheme="emerald"
+            />
+            <StatCard
+              label="Peers"
+              value={connectedCount}
+              icon="group"
+              colorScheme="blue"
+            />
+            <StatCard
+              label="Messages"
+              value={messages.length}
+              icon="chat"
+              colorScheme="purple"
+            />
           </div>
 
           {/* Content Grid */}
-          <div className="p-5 rounded-2xl bg-gray-50 dark:bg-zinc-800/50">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-gray-900 dark:text-white">Recent Messages</h3>
-              <button onClick={onViewAllChats} className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+          <div className="card-section">
+            <div className="section-header">
+              <h3 className="section-heading">Recent Messages</h3>
+              <button onClick={onViewAllChats} className="text-link">
                 View all
               </button>
             </div>
-            <div className="space-y-2">
+            <div className="card-grid card-grid-3">
               {recentMessages.length === 0 ? (
-                <div className="text-center py-6">
-                  <span className="material-symbols-rounded text-2xl text-gray-300 dark:text-gray-700 leading-none">inbox</span>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">No messages</p>
+                <div className="empty-state">
+                  <span className="material-symbols-rounded icon-2xl text-gray-300 dark:text-gray-700 leading-none">inbox</span>
+                  <p className="text-caption">No messages</p>
                 </div>
               ) : (
                 recentMessages.map((msg) => (
-                  <div
+                  <button
                     key={msg.id}
-                    className="flex items-start gap-2 p-2 rounded-xl hover:bg-white dark:hover:bg-zinc-700/50"
+                    onClick={() => onMessageClick(msg.srcId === myPhone ? msg.destId : msg.srcId)}
+                    className="field-box w-full field-box-clickable"
                   >
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                      {msg.srcId === myPhone ? 'Y' : getContactName(msg.srcId)[0]}
+                    <div className="avatar">
+                      {msg.srcId === myPhone ? getContactName(msg.destId)[0] : getContactName(msg.srcId)[0]}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="text-xs font-semibold text-gray-900 dark:text-white truncate">
-                          {msg.srcId === myPhone ? 'You' : getContactName(msg.srcId)}
-                        </p>
-                        <span className="text-[10px] text-gray-400 flex-shrink-0">
-                          {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                      </div>
-                      <p className="text-xs text-gray-600 dark:text-gray-400 truncate">{msg.content}</p>
+                    <div className="label-text">
+                      {msg.srcId === myPhone ? getContactName(msg.destId) : getContactName(msg.srcId)}
                     </div>
-                  </div>
+                    <p className="text-body line-clamp-2 leading-tight">{msg.content}</p>
+                    <span className="text-micro">
+                      {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </button>
                 ))
               )}
             </div>
