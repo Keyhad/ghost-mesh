@@ -39,7 +39,7 @@ User-facing command-line interface:
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│                    Message Lifecycle                      │
+│                    Message Lifecycle                     │
 └──────────────────────────────────────────────────────────┘
 
 1. User sends message

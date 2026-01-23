@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { storage } from '@/lib/storage';
 import { GhostMeshNetwork } from '@/lib/mesh-network';
 import { Message, Device, Contact } from '@/lib/types';
-import { Card } from '@/components/Card';
 import { StatusBadge } from '@/components/StatusBadge';
 import { DashboardCard } from '@/components/DashboardCard';
 import { ContactsCard } from '@/components/ContactsCard';
@@ -12,6 +11,7 @@ import { ConversationCard } from '@/components/ConversationCard';
 import { PerMonCard } from '@/components/PerMonCard';
 import { DevicesCard } from '@/components/DevicesCard';
 import { SignalHistogramCard } from '@/components/SignalHistogramCard';
+import { WelcomePage } from '@/components/WelcomePage';
 
 type TabKey = 'dashboard' | 'contacts' | 'chats' | 'permon' | 'devices' | 'signal' | string;
 
@@ -40,6 +40,19 @@ export default function Home() {
   };
 
   useEffect(() => {
+    // Check for reset URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('reset') === 'true') {
+      // Clear storage and reset state
+      localStorage.clear();
+      setIsSetup(false);
+      setMyPhone('');
+      setPhoneInput('');
+      // Remove the reset parameter from URL
+      window.history.replaceState({}, '', window.location.pathname);
+      return;
+    }
+
     const savedPhone = storage.getMyPhone();
     if (savedPhone) {
       setMyPhone(savedPhone);
@@ -148,41 +161,11 @@ export default function Home() {
 
   if (!isSetup) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 grid place-items-center p-6">
-        <Card className="w-full max-w-md p-10">
-          <div className="text-center space-y-6">
-            <div className="mx-auto w-20 h-20 rounded-3xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/30">
-              <span className="material-symbols-rounded text-4xl leading-none">hub</span>
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white leading-none">GhostMesh</h1>
-              <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">Enter the decentralized mesh network</p>
-            </div>
-          </div>
-          <div className="mt-10 flex flex-col items-center gap-6">
-            <div className="flex flex-col items-center gap-4">
-              <span className="material-symbols-rounded text-gray-400 text-4xl leading-none">call</span>
-              <label className="text-xs font-medium text-gray-500 dark:text-gray-400 text-center">Phone Number</label>
-              <div className="flex items-center justify-center rounded-2xl bg-gray-100 dark:bg-zinc-800 px-5 py-3.5 w-72">
-                <input
-                  type="tel"
-                  value={phoneInput}
-                  onChange={(e) => setPhoneInput(e.target.value)}
-                  placeholder="+1234567890"
-                  className="w-full bg-transparent outline-none text-gray-900 dark:text-white placeholder:text-gray-400 text-center leading-none"
-                  onKeyPress={(e) => e.key === 'Enter' && setupPhone()}
-                />
-              </div>
-            </div>
-            <button
-              onClick={setupPhone}
-              className="px-10 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold hover:shadow-lg hover:shadow-blue-500/30 transition-all leading-none"
-            >
-              Continue
-            </button>
-          </div>
-        </Card>
-      </div>
+      <WelcomePage
+        phoneInput={phoneInput}
+        onPhoneInputChange={setPhoneInput}
+        onContinue={setupPhone}
+      />
     );
   }
 
