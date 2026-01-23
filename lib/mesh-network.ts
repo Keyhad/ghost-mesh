@@ -6,10 +6,13 @@ import { storage } from './storage';
 const WS_URL = process.env.NEXT_PUBLIC_BLE_WS_URL || 'ws://localhost:8080';
 
 interface ServerEvent {
-  type: 'connected' | 'device_update' | 'message_received' | 'message_sent' | 'error';
+  type: 'connected' | 'device_update' | 'device_removed' | 'devices_list' | 'message_received' | 'message_sent' | 'error';
+  device?: any;
   devices?: any[];
   message?: any;
   error?: string;
+  activeCount?: number;
+  totalCount?: number;
 }
 
 export class GhostMeshNetwork {
@@ -107,8 +110,38 @@ export class GhostMeshNetwork {
         break;
 
       case 'device_update':
+        // Handle single device update
+        if (event.device) {
+          this.updateSingleDevice(event.device);
+        }
+        // Update active device count if provided
+        if (event.activeCount !== undefined) {
+          this.bleDeviceCount = event.activeCount;
+        }
+        break;
+
+      case 'device_removed':
+        // Handle device removal
         if (event.devices) {
-          this.updateDevices(event.devices);
+          event.devices.forEach(removedDevice => {
+            this.devices = this.devices.filter(d => d.id !== removedDevice.id);
+          });
+          storage.updateDevices(this.devices);
+          this.onDeviceUpdate?.(this.devices);
+        }
+        // Update counts
+        if (event.activeCount !== undefined) {
+          this.bleDeviceCount = event.activeCount;
+        }
+        break;
+
+      case 'devices_list':
+        // Handle full device list
+        if (event.devices) {
+          this.updateDevicesList(event.devices);
+        }
+        if (event.activeCount !== undefined) {
+          this.bleDeviceCount = event.activeCount;
         }
         break;
 
@@ -136,13 +169,40 @@ export class GhostMeshNetwork {
     }
   }
 
+  private updateSingleDevice(deviceData: any) {
+    const existing = this.devices.find(d => d.id === deviceData.id);
+    
+    if (existing) {
+      existing.connected = deviceData.isActive || false;
+      existing.lastSeen = deviceData.lastSeen || Date.now();
+    } else if (deviceData.status !== 'removed') {
+      this.devices.push({
+        id: deviceData.id,
+        peerId: deviceData.id,
+        lastSeen: deviceData.lastSeen || Date.now(),
+        connected: deviceData.isActive || false,
+      });
+    }
+
+    storage.updateDevices(this.devices);
+    this.onDeviceUpdate?.(this.devices);
+  }
+
+  private updateDevicesList(newDevices: any[]) {
+    // Replace device list with new data
+    this.devices = newDevices.map(d => ({
+      id: d.id,
+      peerId: d.id,
+      lastSeen: d.lastSeen || Date.now(),
+      connected: d.isActive || false,
+    }));
+
+    storage.updateDevices(this.devices);
+    this.onDeviceUpdate?.(this.devices);
+  }
+
   private updateDevices(newDevices: any[]) {
     newDevices.forEach(newDevice => {
-      // Track BLE device count separately
-      if (newDevice.totalCount !== undefined) {
-        this.bleDeviceCount = newDevice.totalCount;
-      }
-
       const existing = this.devices.find(d => d.id === newDevice.id);
       if (existing) {
         existing.connected = newDevice.connected;

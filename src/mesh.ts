@@ -19,12 +19,26 @@ import { logger } from './logger';
 const GHOST_MESH_SERVICE_UUID = '12345678123456781234567812345678';
 const MESSAGE_CHARACTERISTIC_UUID = '87654321876543218765432187654321';
 
+// Device timeout configuration
+const DEVICE_TIMEOUT_MS = 30000; // 30 seconds - device considered offline
+const DEVICE_CLEANUP_INTERVAL_MS = 5000; // Check every 5 seconds
+const DEVICE_ACTIVE_THRESHOLD_MS = 10000; // 10 seconds - recent activity
+
+interface DeviceInfo {
+  lastSeen: number;
+  rssi: number;
+  firstSeen: number;
+  activityCount: number;
+  isActive: boolean;
+}
+
 export class MeshNode extends EventEmitter {
   private phoneNumber: string;
   private seenMessages: Set<string> = new Set();
   private messageQueue: Message[] = [];
   private isScanning: boolean = false;
-  private discoveredDevices: Map<string, { lastSeen: number; rssi: number }> = new Map();
+  private discoveredDevices: Map<string, DeviceInfo> = new Map();
+  private cleanupInterval: NodeJS.Timeout | null = null;
 
   constructor(phoneNumber: string) {
     super();
@@ -37,6 +51,7 @@ export class MeshNode extends EventEmitter {
   async start(): Promise<void> {
     await this.waitForBluetooth();
     await this.startScanning();
+    this.startDeviceCleanup();
     this.emit('started', { phoneNumber: this.phoneNumber });
   }
 
@@ -47,6 +62,10 @@ export class MeshNode extends EventEmitter {
     if (this.isScanning) {
       await noble.stopScanning();
       this.isScanning = false;
+    }
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+      this.cleanupInterval = null;
     }
     this.emit('stopped');
   }
@@ -137,7 +156,19 @@ export class MeshNode extends EventEmitter {
 
     await noble.startScanning([], true);
     this.isScanning = true;
+    logger.success('📡 BLE scanning started - listening for devices...');
     this.emit('scanning', true);
+
+    // Log scanning status periodically
+    const scanningStatusInterval = setInterval(() => {
+      if (!this.isScanning) {
+        clearInterval(scanningStatusInterval);
+        return;
+      }
+      const activeDevices = this.getActiveDeviceCount();
+      const totalDevices = this.discoveredDevices.size;
+      logger.info(`📡 Scanning... Active devices: ${activeDevices}, Total tracked: ${totalDevices}`);
+    }, 30000); // Log every 30 seconds
   }
 
   /**
@@ -145,17 +176,30 @@ export class MeshNode extends EventEmitter {
    */
   private handlePeripheralDiscovered(peripheral: any): void {
     const advertisement = peripheral.advertisement;
+    const now = Date.now();
+    const deviceId = peripheral.id;
 
-    // Track this device
-    this.discoveredDevices.set(peripheral.id, {
-      lastSeen: Date.now(),
+    // Update or create device tracking info
+    const existingDevice = this.discoveredDevices.get(deviceId);
+    const isNewDevice = !existingDevice;
+
+    const deviceInfo: DeviceInfo = {
+      lastSeen: now,
       rssi: peripheral.rssi,
-    });
+      firstSeen: existingDevice?.firstSeen || now,
+      activityCount: (existingDevice?.activityCount || 0) + 1,
+      isActive: true,
+    };
 
-    // Emit device discovered event with current count
+    this.discoveredDevices.set(deviceId, deviceInfo);
+
+    // Always emit device discovered event to maintain count updates
+    // This ensures the UI gets updates even for repeat advertisements
     this.emit('deviceDiscovered', {
-      id: peripheral.id,
-      totalCount: this.discoveredDevices.size,
+      id: deviceId,
+      rssi: peripheral.rssi,
+      totalCount: this.getActiveDeviceCount(),
+      isNew: isNewDevice,
     });
 
     // Log ALL discovered BLE devices for debugging
@@ -267,5 +311,100 @@ export class MeshNode extends EventEmitter {
       }
       messagesToRemove.forEach(id => this.seenMessages.delete(id));
     }
+  }
+
+  /**
+   * Start periodic device cleanup to remove stale devices
+   */
+  private startDeviceCleanup(): void {
+    this.cleanupInterval = setInterval(() => {
+      this.cleanupStaleDevices();
+    }, DEVICE_CLEANUP_INTERVAL_MS);
+  }
+
+  /**
+   * Remove devices that haven't been seen recently
+   */
+  private cleanupStaleDevices(): void {
+    const now = Date.now();
+    const devicesToRemove: string[] = [];
+    const devicesNowInactive: string[] = [];
+
+    for (const [deviceId, device] of this.discoveredDevices.entries()) {
+      const timeSinceLastSeen = now - device.lastSeen;
+
+      // Mark device as inactive if not recently seen
+      if (timeSinceLastSeen > DEVICE_ACTIVE_THRESHOLD_MS && device.isActive) {
+        device.isActive = false;
+        devicesNowInactive.push(deviceId);
+      }
+
+      // Remove device if timeout exceeded
+      if (timeSinceLastSeen > DEVICE_TIMEOUT_MS) {
+        devicesToRemove.push(deviceId);
+      }
+    }
+
+    // Emit inactive status updates
+    devicesNowInactive.forEach(deviceId => {
+      this.emit('deviceInactive', {
+        id: deviceId,
+        lastSeen: this.discoveredDevices.get(deviceId)?.lastSeen,
+      });
+    });
+
+    // Remove timed out devices
+    if (devicesToRemove.length > 0) {
+      devicesToRemove.forEach(deviceId => {
+        const device = this.discoveredDevices.get(deviceId);
+        this.discoveredDevices.delete(deviceId);
+        logger.ble(`Device ${deviceId} removed (timeout - last seen ${Math.floor((now - (device?.lastSeen || 0)) / 1000)}s ago)`);
+      });
+
+      // Emit device list update
+      this.emit('devicesUpdated', {
+        activeCount: this.getActiveDeviceCount(),
+        totalCount: this.discoveredDevices.size,
+        removed: devicesToRemove,
+      });
+    }
+  }
+
+  /**
+   * Get count of active devices (recently seen)
+   */
+  private getActiveDeviceCount(): number {
+    const now = Date.now();
+    let activeCount = 0;
+
+    for (const device of this.discoveredDevices.values()) {
+      if (device.isActive || (now - device.lastSeen) < DEVICE_ACTIVE_THRESHOLD_MS) {
+        activeCount++;
+      }
+    }
+
+    return activeCount;
+  }
+
+  /**
+   * Get list of all tracked devices
+   */
+  getDevices(): Array<{ id: string; lastSeen: number; rssi: number; isActive: boolean; activityCount: number }> {
+    const devices: Array<{ id: string; lastSeen: number; rssi: number; isActive: boolean; activityCount: number }> = [];
+
+    for (const [id, device] of this.discoveredDevices.entries()) {
+      devices.push({
+        id,
+        lastSeen: device.lastSeen,
+        rssi: device.rssi,
+        isActive: device.isActive,
+        activityCount: device.activityCount,
+      });
+    }
+
+    // Sort by last seen (most recent first)
+    devices.sort((a, b) => b.lastSeen - a.lastSeen);
+
+    return devices;
   }
 }

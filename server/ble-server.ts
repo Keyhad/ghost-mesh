@@ -18,11 +18,23 @@ interface ClientCommand {
   content?: string;
 }
 
+interface DeviceStatus {
+  id: string;
+  lastSeen: number;
+  rssi: number;
+  isActive: boolean;
+  activityCount: number;
+  status: 'new' | 'active' | 'inactive' | 'removed';
+}
+
 interface ServerEvent {
-  type: 'connected' | 'device_update' | 'message_received' | 'message_sent' | 'error';
-  devices?: any[];
+  type: 'connected' | 'device_update' | 'device_removed' | 'devices_list' | 'message_received' | 'message_sent' | 'error';
+  devices?: DeviceStatus[];
+  device?: DeviceStatus;
   message?: Message;
   error?: string;
+  activeCount?: number;
+  totalCount?: number;
 }
 
 class BLEServer {
@@ -96,8 +108,21 @@ class BLEServer {
           this.sendError(ws, 'Mesh node not initialized');
           return;
         }
-        // Devices are sent via events, so just acknowledge
-        this.send(ws, { type: 'connected' });
+        // Send current device list
+        const devices: DeviceStatus[] = this.meshNode.getDevices().map(d => ({
+          id: d.id,
+          lastSeen: d.lastSeen,
+          rssi: d.rssi,
+          isActive: d.isActive,
+          activityCount: d.activityCount,
+          status: (d.isActive ? 'active' : 'inactive') as 'active' | 'inactive',
+        }));
+        this.send(ws, {
+          type: 'devices_list',
+          devices,
+          activeCount: devices.filter(d => d.isActive).length,
+          totalCount: devices.length,
+        });
         break;
 
       case 'disconnect':
@@ -129,11 +154,58 @@ class BLEServer {
       });
 
       this.meshNode.on('deviceDiscovered', (device) => {
-        logger.ble('Device discovered:', device.id, 'Total:', device.totalCount);
+        logger.ble('Device discovered:', device.id, 'Active:', device.totalCount, 'New:', device.isNew);
         this.broadcast({
           type: 'device_update',
-          devices: [{ id: device.id, totalCount: device.totalCount, connected: false, lastSeen: Date.now() }],
+          device: {
+            id: device.id,
+            lastSeen: Date.now(),
+            rssi: device.rssi,
+            isActive: true,
+            activityCount: 1,
+            status: device.isNew ? 'new' : 'active',
+          },
+          activeCount: device.totalCount,
         });
+      });
+
+      this.meshNode.on('deviceHeartbeat', (device) => {
+        // Optionally send periodic updates (can be throttled if needed)
+        // logger.debug('Device heartbeat:', device.id, 'RSSI:', device.rssi);
+      });
+
+      this.meshNode.on('deviceInactive', (device) => {
+        logger.ble('Device inactive:', device.id);
+        this.broadcast({
+          type: 'device_update',
+          device: {
+            id: device.id,
+            lastSeen: device.lastSeen,
+            rssi: -100,
+            isActive: false,
+            activityCount: 0,
+            status: 'inactive',
+          },
+        });
+      });
+
+      this.meshNode.on('devicesUpdated', (data) => {
+        logger.ble('Devices updated - Active:', data.activeCount, 'Total:', data.totalCount, 'Removed:', data.removed.length);
+        if (data.removed.length > 0) {
+          this.broadcast({
+            type: 'device_removed',
+            devices: data.removed.map(id => ({
+              id,
+              lastSeen: 0,
+              rssi: -100,
+              isActive: false,
+              activityCount: 0,
+              status: 'removed',
+            })),
+            activeCount: data.activeCount,
+            totalCount: data.totalCount,
+          });
+        }
       });
 
       this.meshNode.on('messageReceived', (message: Message) => {
@@ -186,6 +258,10 @@ class BLEServer {
 
   private sendError(ws: WebSocket, error: string) {
     this.send(ws, { type: 'error', error });
+  }
+
+  getMeshNode(): MeshNode | null {
+    return this.meshNode;
   }
 }
 
