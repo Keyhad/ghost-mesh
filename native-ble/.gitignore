@@ -1,0 +1,12 @@
+build/
+dist/
+node_modules/
+*.log
+*.swp
+*.swo
+*~
+.DS_Store
+.vscode/
+.idea/
+*.tgz
+prebuilds/
