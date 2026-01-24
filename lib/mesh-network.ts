@@ -67,13 +67,10 @@ export class GhostMeshNetwork {
         }
       };
 
-      this.ws.onerror = (error) => {
-        console.error('❌ WebSocket error:', {
-          type: error.type,
-          message: error.message || 'Connection failed',
-          target: error.target ? 'WebSocket' : undefined
-        });
+      this.ws.onerror = (event) => {
+        console.error('❌ WebSocket connection error - Failed to connect to BLE server');
         console.warn('💡 Make sure the BLE server is running: npm run dev:server');
+        console.info(`🔗 Expected server URL: ${WS_URL}`);
       };
 
       this.ws.onclose = () => {
