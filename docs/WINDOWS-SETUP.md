@@ -1,8 +1,24 @@
 # Windows Setup Guide for GhostMesh
 
+## ⚠️ Important Limitation
+
+**BLE Mesh Networking is NOT supported on Windows.** The `@abandonware/noble` and `@abandonware/bleno` libraries require direct USB/HCI Bluetooth access, which Windows Bluetooth stack doesn't provide.
+
+**Supported Platforms for BLE Mesh:**
+- ✅ macOS (uses CoreBluetooth)
+- ✅ Linux (uses BlueZ/HCI)
+- ❌ Windows (LIBUSB_ERROR_NOT_SUPPORTED)
+
+**On Windows, you can:**
+1. Run the Web UI only (without BLE mesh functionality)
+2. Use it as a development environment for the frontend
+3. Test non-Bluetooth features
+
+For full BLE mesh functionality, use macOS or Linux.
+
 ## Prerequisites
 
-GhostMesh requires native Bluetooth access, so it must run on **Windows natively** (not WSL2 or Docker).
+If you want to run the Web UI on Windows (without BLE), you need **Windows natively** (not WSL2 or Docker).
 
 ## Install Dependencies with Chocolatey
 

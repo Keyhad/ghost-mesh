@@ -3,8 +3,6 @@
  * Handles BLE advertising, scanning, and message relay
  */
 
-import noble from '@abandonware/noble';
-import bleno from '@abandonware/bleno';
 import { EventEmitter } from 'events';
 import {
   Message,
@@ -15,6 +13,29 @@ import {
   generateMessageId
 } from './protocol';
 import { logger } from './logger';
+
+// Platform-specific BLE library imports
+let noble: any;
+let bleno: any;
+
+if (process.platform === 'win32') {
+  // Windows: Use @stoprocent/noble (better Windows support)
+  try {
+    noble = require('@stoprocent/noble');
+    // Note: BLE advertising (bleno) not supported on Windows
+    bleno = null;
+    logger.info('🪟 Using Windows Bluetooth bindings (@stoprocent/noble)');
+    logger.info('📡 Scanning enabled, advertising not available on Windows');
+  } catch (error) {
+    logger.error('Failed to load Windows BLE library:', error);
+    throw error;
+  }
+} else {
+  // macOS/Linux: Use abandonware libraries
+  noble = require('@abandonware/noble');
+  bleno = require('@abandonware/bleno');
+  logger.info('🍎 Using macOS/Linux Bluetooth bindings');
+}
 
 // Service UUID for ghost-mesh (shortened for advertising)
 const GHOST_MESH_SERVICE_UUID = '1234';
@@ -199,6 +220,11 @@ export class MeshNode extends EventEmitter {
     const isGhostMesh = advertisement.localName === 'GhostMesh' ||
                         (advertisement.serviceUuids && advertisement.serviceUuids.includes(GHOST_MESH_SERVICE_UUID));
 
+    // Debug: Log all discovered devices with details
+    if (advertisement.localName || advertisement.serviceUuids?.length > 0) {
+      logger.debug(`BLE: ${advertisement.localName || 'Unknown'} | UUIDs: ${advertisement.serviceUuids?.join(', ') || 'none'} | ${peripheral.rssi}dBm ${isGhostMesh ? '✅ GHOSTMESH' : ''}`);
+    }
+
     // Update or create device tracking info
     const existingDevice = this.discoveredDevices.get(deviceId);
     const isNewDevice = !existingDevice;
@@ -294,6 +320,10 @@ export class MeshNode extends EventEmitter {
     // Check if we've already seen this message (prevent loops)
     if (this.seenMessages.has(message.id)) {
       logger.debug(`Duplicate message ${message.id}, skipping`);
+
+      // Remove from advertising queue since another node is relaying it
+      this.removeFromAdvertisingQueue(message.id);
+
       return;
     }
 
@@ -343,10 +373,31 @@ export class MeshNode extends EventEmitter {
   }
 
   /**
+   * Remove message from advertising queue (when confirmed relayed by another node)
+   */
+  private removeFromAdvertisingQueue(messageId: string): void {
+    const beforeLength = this.messageQueue.length;
+    this.messageQueue = this.messageQueue.filter(msg => msg.id !== messageId);
+
+    if (this.messageQueue.length < beforeLength) {
+      logger.info(`🛑 Stopped advertising message ${messageId.substring(0, 8)}... (confirmed relayed by another node)`);
+      this.updateAdvertisingData();
+    }
+  }
+
+  /**
    * Start BLE advertising with message payloads
    */
   private async startAdvertising(): Promise<void> {
     return new Promise((resolve, reject) => {
+      // Check if bleno is available (not on Windows)
+      if (!bleno) {
+        logger.warn('⚠️  BLE advertising not supported on Windows platform');
+        logger.info('💡 You can still receive messages via scanning');
+        resolve(); // Don't fail, just skip advertising
+        return;
+      }
+
       const startAdvertisingNow = () => {
         // Start advertising with message rotation
         this.updateAdvertisingData();
@@ -396,6 +447,11 @@ export class MeshNode extends EventEmitter {
    * Update advertising data with current message
    */
   private updateAdvertisingData(): void {
+    // Skip if bleno not available (Windows)
+    if (!bleno) {
+      return;
+    }
+
     if (!this.isAdvertising && !bleno.state) {
       return;
     }

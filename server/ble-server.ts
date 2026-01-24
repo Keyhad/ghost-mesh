@@ -41,10 +41,19 @@ class BLEServer {
   private wss: WebSocketServer;
   private meshNode: MeshNode | null = null;
   private clients: Set<WebSocket> = new Set();
+  private isWindowsPlatform: boolean;
 
   constructor(port: number) {
+    this.isWindowsPlatform = process.platform === 'win32';
+
     this.wss = new WebSocketServer({ port });
     logger.success(`BLE WebSocket Server listening on ws://localhost:${port}`);
+
+    if (this.isWindowsPlatform) {
+      logger.warn('⚠️  Running on Windows - BLE advertising not available');
+      logger.info('📡 Scanning enabled: You can receive messages from nearby devices');
+      logger.info('🚫 Sending disabled: Cannot broadcast messages (advertising not supported)');
+    }
 
     this.wss.on('connection', (ws: WebSocket) => {
       logger.connection('Web client connected');
@@ -88,6 +97,12 @@ class BLEServer {
           this.sendError(ws, 'Phone number required for init');
           return;
         }
+
+        // Windows: scanning works, advertising doesn't
+        if (this.isWindowsPlatform) {
+          logger.warn('Windows: BLE scanning enabled, advertising disabled (receive-only mode)');
+        }
+
         await this.initMeshNode(ws, command.phoneNumber);
         break;
 

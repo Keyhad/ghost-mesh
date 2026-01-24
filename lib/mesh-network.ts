@@ -2,8 +2,10 @@
 
 import { Message, Device } from './types';
 import { storage } from './storage';
+import { WebBluetoothMesh } from './web-bluetooth';
 
 const WS_URL = process.env.NEXT_PUBLIC_BLE_WS_URL || 'ws://localhost:8080';
+const USE_WEB_BLUETOOTH = typeof window !== 'undefined' && WebBluetoothMesh.isSupported();
 
 interface ServerEvent {
   type: 'connected' | 'device_update' | 'device_removed' | 'devices_list' | 'message_received' | 'message_sent' | 'error';
@@ -18,6 +20,8 @@ interface ServerEvent {
 export class GhostMeshNetwork {
   private myPhone: string;
   private ws: WebSocket | null = null;
+  private webBluetooth: WebBluetoothMesh | null = null;
+  private usingWebBluetooth: boolean = false;
   private devices: Device[] = [];
   private reconnectAttempts: number = 0;
   private maxReconnectAttempts: number = 5;
@@ -91,7 +95,13 @@ export class GhostMeshNetwork {
 
   private attemptReconnect() {
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-      console.error('❌ Max reconnection attempts reached. Please start the BLE server.');
+      console.error('❌ Max reconnection attempts reached.');
+
+      // Try Web Bluetooth fallback if available
+      if (USE_WEB_BLUETOOTH && !this.usingWebBluetooth) {
+        console.log('🌐 Attempting Web Bluetooth fallback...');
+        this.initWebBluetooth();
+      }
       return;
     }
 
@@ -103,6 +113,35 @@ export class GhostMeshNetwork {
     this.reconnectTimeout = setTimeout(() => {
       this.connectWebSocket();
     }, delay);
+  }
+
+  private async initWebBluetooth() {
+    try {
+      console.log('🌐 Initializing Web Bluetooth...');
+      this.webBluetooth = new WebBluetoothMesh(this.myPhone);
+
+      this.webBluetooth.onDevice((deviceId, rssi) => {
+        console.log(`📡 Web BLE Device found: ${deviceId} (${rssi} dBm)`);
+        this.bleDeviceCount++;
+      });
+
+      this.webBluetooth.onMessage((message) => {
+        console.log('📬 Message received via Web Bluetooth:', message);
+        this.onMessageReceived?.(message);
+        storage.addMessage(message);
+      });
+
+      await this.webBluetooth.startScanning();
+      this.usingWebBluetooth = true;
+      this.meshActive = true;
+      this.onStatusChange?.(true);
+
+      console.log('✅ Web Bluetooth mesh active');
+      console.info('💡 To enable advertising: chrome://flags/#enable-experimental-web-platform-features');
+    } catch (error) {
+      console.error('Failed to initialize Web Bluetooth:', error);
+      this.usingWebBluetooth = false;
+    }
   }
 
   private handleServerEvent(event: ServerEvent) {
@@ -261,7 +300,15 @@ export class GhostMeshNetwork {
 
     storage.addMessage(message);
 
-    // Send via WebSocket to BLE server
+    // Send via Web Bluetooth if active
+    if (this.usingWebBluetooth && this.webBluetooth) {
+      this.webBluetooth.startAdvertising(message).catch(err => {
+        console.warn('⚠️ Web Bluetooth advertising failed:', err);
+      });
+      return;
+    }
+
+    // Otherwise send via WebSocket to BLE server
     this.sendCommand({
       type: 'send_message',
       to: dstId,
