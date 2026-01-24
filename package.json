@@ -21,6 +21,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@abandonware/bleno": "^0.6.2",
     "@abandonware/noble": "^1.9.2-26",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/node": "^25.0.9",

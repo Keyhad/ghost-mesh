@@ -341,6 +341,7 @@ export default function Home() {
       {/* Main Content - Collapsible Cards */}
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 pb-12 space-y-4">
         <DashboardCard
+          key="dashboard"
           isExpanded={expandedSections.has('dashboard')}
           onToggle={() => toggleSection('dashboard')}
           connectedCount={connectedCount}
@@ -368,30 +369,35 @@ export default function Home() {
         />
 
         <SOSLogCard
+          key="sos-log"
           isExpanded={expandedSections.has('sos-log')}
           onToggle={() => toggleSection('sos-log')}
           logs={sosLogs}
         />
 
         <PerMonCard
+          key="permon"
           isExpanded={expandedSections.has('permon')}
           onToggle={() => toggleSection('permon')}
           performanceData={performanceData}
         />
 
         <SignalHistogramCard
+          key="signal"
           isExpanded={expandedSections.has('signal')}
           onToggle={() => toggleSection('signal')}
           devices={devices}
         />
 
         <DevicesCard
+          key="devices"
           isExpanded={expandedSections.has('devices')}
           onToggle={() => toggleSection('devices')}
           devices={devices}
         />
 
         <ContactsCard
+          key="contacts"
           isExpanded={expandedSections.has('contacts')}
           onToggle={() => toggleSection('contacts')}
           contacts={contacts}
