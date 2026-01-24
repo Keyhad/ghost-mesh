@@ -209,7 +209,7 @@ export default function Home() {
           });
         },
         (error) => {
-          console.error('GPS Error:', error.message);
+          console.warn('GPS Error:', error.message, '- Sending SOS without GPS data');
 
           // Fallback: Send without GPS (use 0.0, 0.0 with max accuracy = no GPS)
           const binaryPlaceholder = `[GPS:0.0,0.0,65535m,${now}]`;
@@ -241,7 +241,11 @@ export default function Home() {
             return [...updated, newLog];
           });
         },
-        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,  // Increased to 15 seconds for better GPS acquisition
+          maximumAge: 10000  // Allow cached position up to 10 seconds old
+        }
       );
     } else {
       console.error('Geolocation not supported');
