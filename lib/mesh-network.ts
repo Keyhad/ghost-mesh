@@ -97,14 +97,10 @@ export class GhostMeshNetwork {
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
       console.error('❌ Max reconnection attempts reached.');
 
-      // Try Web Bluetooth fallback if available
+      // Suggest Web Bluetooth but don't auto-trigger (requires user gesture)
       if (USE_WEB_BLUETOOTH && !this.usingWebBluetooth) {
-        console.log('🌐 Attempting Web Bluetooth fallback...');
-        this.initWebBluetooth();
-      }
-      return;
-    }
-
+        console.warn('💡 BLE server not available. You can use Web Bluetooth instead.');
+        console.info('🌐 Call network.enableWebBluetooth() or add a button to enable it.');
     this.reconnectAttempts++;
     const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 10000);
 
@@ -115,7 +111,19 @@ export class GhostMeshNetwork {
     }, delay);
   }
 
-  private async initWebBluetooth() {
+/**
+   * Enable Web Bluetooth (must be called from user gesture like button click)
+   */
+  async enableWebBluetooth(): Promise<void> {
+    if (this.usingWebBluetooth) {
+      console.warn('Web Bluetooth already active');
+      return;
+    }
+
+    if (!USE_WEB_BLUETOOTH) {
+      throw new Error('Web Bluetooth not supported in this browser');
+    }
+
     try {
       console.log('🌐 Initializing Web Bluetooth...');
       this.webBluetooth = new WebBluetoothMesh(this.myPhone);
@@ -141,7 +149,15 @@ export class GhostMeshNetwork {
     } catch (error) {
       console.error('Failed to initialize Web Bluetooth:', error);
       this.usingWebBluetooth = false;
+      throw error;
     }
+  }
+
+  /**
+   * Check if Web Bluetooth is available
+   */
+  isWebBluetoothAvailable(): boolean {
+    return USE_WEB_BLUETOOTH && !this.usingWebBluetooth;
   }
 
   private handleServerEvent(event: ServerEvent) {

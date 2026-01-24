@@ -51,7 +51,7 @@ All platforms install all packages, but only the correct one is loaded at runtim
 ### Testing Strategy
 
 1. **Frontend development**: Use either platform
-2. **BLE mesh testing**: 
+2. **BLE mesh testing**:
    - **Full mesh**: Test on macOS (or Linux)
    - **Receive-only**: Test on Windows
    - **Cross-platform**: macOS sends → Windows receives
@@ -167,9 +167,9 @@ npm run ble-server
 
 ## Summary
 
-✅ **No conflicts** between macOS and Windows development  
-✅ **Safe to switch** platforms and push/pull code  
-✅ **Runtime detection** ensures correct libraries load  
-✅ **Both platforms** can coexist in git repo  
+✅ **No conflicts** between macOS and Windows development
+✅ **Safe to switch** platforms and push/pull code
+✅ **Runtime detection** ensures correct libraries load
+✅ **Both platforms** can coexist in git repo
 
 The only difference is **capability** - macOS has full mesh, Windows has receive-only.

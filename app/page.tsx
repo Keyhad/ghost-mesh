@@ -329,6 +329,24 @@ export default function Home() {
                   <span className="material-symbols-rounded text-blue-600 dark:text-blue-400 text-xl leading-none">bluetooth</span>
                 </div>
               </div>
+
+              {/* Web Bluetooth fallback button */}
+              {!meshActive && network?.isWebBluetoothAvailable() && (
+                <button
+                  onClick={async () => {
+                    try {
+                      await network.enableWebBluetooth();
+                    } catch (err) {
+                      console.error('Failed to enable Web Bluetooth:', err);
+                      alert('Failed to enable Web Bluetooth. Make sure to allow Bluetooth access.');
+                    }
+                  }}
+                  className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium transition-colors"
+                >
+                  🌐 Use Web Bluetooth
+                </button>
+              )}
+
               <StatusBadge connected={meshActive} />
               <div className="px-3 py-1.5 rounded-full bg-gray-100 dark:bg-zinc-800 flex items-center">
                 <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 leading-none">{connectedCount} peers</span>
