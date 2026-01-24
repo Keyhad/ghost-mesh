@@ -8,6 +8,8 @@ import {
   Message,
   serializeMessage,
   deserializeMessage,
+  encodeToManufacturerData,
+  decodeFromManufacturerData,
   phoneNumberMatches,
   MAX_HOPS,
   generateMessageId
@@ -259,7 +261,18 @@ export class MeshNode extends EventEmitter {
     }
 
     // Try to extract message from advertising data
-    // Priority 1: Service Data (if available)
+    // Priority 1: Manufacturer Data (our compact format)
+    if (isGhostMesh && advertisement.manufacturerData && advertisement.manufacturerData.length >= 20) {
+      const companyId = advertisement.manufacturerData.readUInt16LE(0);
+      if (companyId === 0xFFFF) {
+        // This is our custom manufacturer data format
+        logger.debug('GhostMesh manufacturer data found:', advertisement.manufacturerData.length, 'bytes');
+        this.handleManufacturerDataMessage(advertisement.manufacturerData, peripheral.rssi, deviceId);
+        return;
+      }
+    }
+
+    // Priority 2: Service Data (if available)
     if (isGhostMesh && advertisement.serviceData) {
       for (const serviceData of advertisement.serviceData) {
         if (serviceData.uuid === GHOST_MESH_SERVICE_UUID) {
@@ -270,10 +283,40 @@ export class MeshNode extends EventEmitter {
       }
     }
 
-    // Priority 2: Manufacturer Data
+    // Priority 3: Legacy manufacturer data (JSON format)
     if (isGhostMesh && advertisement.manufacturerData && advertisement.manufacturerData.length > 0) {
-      logger.debug('GhostMesh manufacturer data:', advertisement.manufacturerData.toString('hex'));
+      logger.debug('GhostMesh legacy manufacturer data:', advertisement.manufacturerData.toString('hex'));
       this.handleMessageReceived(advertisement.manufacturerData, peripheral.rssi, deviceId);
+    }
+  }
+
+  /**
+   * Handle received message from manufacturer data
+   */
+  private handleManufacturerDataMessage(data: Buffer, rssi: number, deviceId: string): void {
+    try {
+      // Decode compact manufacturer data format
+      const message = decodeFromManufacturerData(data);
+
+      if (!message) {
+        logger.debug('Could not decode manufacturer data message');
+        return;
+      }
+
+      logger.message(`📨 Message received via manufacturer data from ${deviceId}: ${message.id}`);
+      logger.debug('Message details:', {
+        from: message.from,
+        to: message.to,
+        hops: message.hops,
+        content: message.content,
+        rssi
+      });
+
+      // Process the received message
+      this.processReceivedMessage(message);
+
+    } catch (error) {
+      logger.debug('Error parsing manufacturer data:', error);
     }
   }
 
@@ -452,44 +495,87 @@ export class MeshNode extends EventEmitter {
       return;
     }
 
-    if (!this.isAdvertising && !bleno.state) {
+    if (!this.isAdvertising && bleno.state !== 'poweredOn') {
       return;
     }
 
-    let advertisingData: Buffer;
+    // Stop current advertising before updating
+    if (this.isAdvertising) {
+      bleno.stopAdvertising();
+    }
+
+    let manufacturerData: Buffer;
 
     if (this.messageQueue.length > 0) {
       // Rotate through messages
       this.currentAdvertisingIndex = (this.currentAdvertisingIndex + 1) % this.messageQueue.length;
       const message = this.messageQueue[this.currentAdvertisingIndex];
 
-      // Serialize message to binary
-      const messageBuffer = serializeMessage(message);
+      // Encode message to compact 27-byte manufacturer data
+      manufacturerData = encodeToManufacturerData(message);
 
-      // BLE advertising data is limited to 31 bytes total
-      // We'll use manufacturer data format to maximize payload
-      advertisingData = messageBuffer.slice(0, 27); // Keep within limits
-
-      logger.debug(`Broadcasting message ${message.id.substring(0, 8)}... (${advertisingData.length} bytes)`);
+      logger.debug(`Broadcasting message ${message.id.substring(0, 8)}... (${manufacturerData.length} bytes manufacturer data)`);
     } else {
-      // Idle beacon - just announce presence
-      const idleData = Buffer.from(`GM:${this.phoneNumber.substring(-4)}`);
-      advertisingData = idleData.slice(0, 27);
+      // Idle beacon - announce presence with minimal data
+      manufacturerData = Buffer.alloc(27);
+      manufacturerData.writeUInt16LE(0xFFFF, 0); // Company ID
+      manufacturerData.writeBigUInt64LE(BigInt(Date.now()), 2); // Timestamp
+
+      // Phone number as idle marker
+      const phoneDigits = parseInt(this.phoneNumber.replace(/\D/g, '').slice(-4)) || 0;
+      manufacturerData.writeUInt32LE(phoneDigits, 10);
+      manufacturerData.writeUInt8(0x00, 18); // Type: Idle
     }
 
-    // Start/restart advertising with new data
+    // Start advertising with manufacturer data
+    // Note: bleno on macOS has limited support for manufacturer data
+    // We use a workaround by accessing the native bindings
+    const BlenoPlatformBindings = (bleno as any)._bindings;
+
+    if (BlenoPlatformBindings && BlenoPlatformBindings.startAdvertisingWithEIRData) {
+      // Direct EIR (Extended Inquiry Response) data for full control
+      const eirData = Buffer.concat([
+        Buffer.from([0x02, 0x01, 0x06]), // Flags
+        Buffer.from([0x0A, 0x09]), // Length + Type (Complete Local Name)
+        Buffer.from('GhostMesh'),
+        Buffer.from([0x03, 0x03, 0x34, 0x12]), // Service UUID
+        Buffer.from([manufacturerData.length + 1, 0xFF]), // Manufacturer data header
+        manufacturerData
+      ]);
+
+      BlenoPlatformBindings.startAdvertisingWithEIRData(eirData, (error: any) => {
+        if (error) {
+          logger.error('EIR advertising error:', error);
+          // Fallback to regular advertising
+          this.fallbackAdvertising();
+        } else {
+          this.isAdvertising = true;
+        }
+      });
+    } else {
+      // Fallback: Standard advertising (name only)
+      this.fallbackAdvertising();
+    }
+
+    bleno.updateRssi();
+  }
+
+  /**
+   * Fallback advertising when manufacturer data isn't supported
+   */
+  private fallbackAdvertising(): void {
     bleno.startAdvertising(
-      'GhostMesh', // Local name
-      [GHOST_MESH_SERVICE_UUID], // Service UUIDs
+      'GhostMesh',
+      [GHOST_MESH_SERVICE_UUID],
       (error) => {
         if (error) {
           logger.error('Advertising error:', error);
+        } else {
+          this.isAdvertising = true;
+          logger.warn('Using fallback advertising (name only - no message data)');
         }
       }
     );
-
-    // Set manufacturer data (0xFFFF = custom manufacturer ID)
-    bleno.updateRssi();
   }
 
   /**
