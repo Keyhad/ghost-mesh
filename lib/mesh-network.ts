@@ -42,11 +42,11 @@ export class GhostMeshNetwork {
     this.startPerformanceMonitoring();
   }
 
-  private loadDevices() {
+  private loadDevices = () => {
     this.devices = storage.getDevices();
-  }
+  };
 
-  private connectWebSocket() {
+  private connectWebSocket = () => {
     try {
       console.log(`🔌 Connecting to BLE server at ${WS_URL}...`);
       this.ws = new WebSocket(WS_URL);
@@ -91,9 +91,9 @@ export class GhostMeshNetwork {
       console.warn('💡 Ensure BLE server is running on ws://localhost:8080');
       this.attemptReconnect();
     }
-  }
+  };
 
-  private attemptReconnect() {
+  private attemptReconnect = () => {
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
       console.error('❌ Max reconnection attempts reached.');
 
@@ -101,6 +101,10 @@ export class GhostMeshNetwork {
       if (USE_WEB_BLUETOOTH && !this.usingWebBluetooth) {
         console.warn('💡 BLE server not available. You can use Web Bluetooth instead.');
         console.info('🌐 Call network.enableWebBluetooth() or add a button to enable it.');
+      }
+      return;
+    }
+
     this.reconnectAttempts++;
     const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 10000);
 
@@ -109,7 +113,7 @@ export class GhostMeshNetwork {
     this.reconnectTimeout = setTimeout(() => {
       this.connectWebSocket();
     }, delay);
-  }
+  };
 
   /**
    * Enable Web Bluetooth (must be called from user gesture like button click)
@@ -160,7 +164,7 @@ export class GhostMeshNetwork {
     return USE_WEB_BLUETOOTH && !this.usingWebBluetooth;
   };
 
-  private handleServerEvent(event: ServerEvent) {
+  private handleServerEvent = (event: ServerEvent) => {
     switch (event.type) {
       case 'connected':
         console.log('✅ BLE mesh node initialized');
@@ -226,9 +230,9 @@ export class GhostMeshNetwork {
       default:
         console.warn('Unknown server event:', event.type);
     }
-  }
+  };
 
-  private updateSingleDevice(deviceData: any) {
+  private updateSingleDevice = (deviceData: any) => {
     const existing = this.devices.find(d => d.id === deviceData.id);
 
     if (existing) {
@@ -249,9 +253,9 @@ export class GhostMeshNetwork {
 
     storage.updateDevices(this.devices);
     this.onDeviceUpdate?.(this.devices);
-  }
+  };
 
-  private updateDevicesList(newDevices: any[]) {
+  private updateDevicesList = (newDevices: any[]) => {
     // Replace device list with new data
     this.devices = newDevices.map(d => ({
       id: d.id,
@@ -264,9 +268,9 @@ export class GhostMeshNetwork {
 
     storage.updateDevices(this.devices);
     this.onDeviceUpdate?.(this.devices);
-  }
+  };
 
-  private updateDevices(newDevices: any[]) {
+  private updateDevices = (newDevices: any[]) => {
     newDevices.forEach(newDevice => {
       const existing = this.devices.find(d => d.id === newDevice.id);
       if (existing) {
@@ -284,15 +288,15 @@ export class GhostMeshNetwork {
 
     storage.updateDevices(this.devices);
     this.onDeviceUpdate?.(this.devices);
-  }
+  };
 
-  private sendCommand(command: any) {
+  private sendCommand = (command: any) => {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify(command));
     } else {
       console.warn('⚠️ WebSocket not connected, command queued');
     }
-  }
+  };
 
   setOnDeviceUpdate(callback: (devices: Device[]) => void) {
     this.onDeviceUpdate = callback;
@@ -333,7 +337,7 @@ export class GhostMeshNetwork {
     });
   }
 
-  private handleReceivedMessage(message: Message) {
+  private handleReceivedMessage = (message: Message) => {
     // Store the message
     storage.addMessage(message);
 
@@ -341,7 +345,7 @@ export class GhostMeshNetwork {
     if (message.dstId === this.myPhone) {
       this.onMessageReceived?.(message);
     }
-  }
+  };
 
   getConnectedDevices(): Device[] {
     return this.devices.filter(d => d.connected);
@@ -377,7 +381,7 @@ export class GhostMeshNetwork {
     return this.meshActive;
   }
 
-  private startPerformanceMonitoring() {
+  private startPerformanceMonitoring = () => {
     // Sample BLE device count every 10 seconds
     this.performanceInterval = setInterval(() => {
       const dataPoint = {
@@ -394,7 +398,7 @@ export class GhostMeshNetwork {
 
       this.onPerformanceUpdate?.(this.performanceData);
     }, 10000); // 10 seconds
-  }
+  };
 
   setOnPerformanceUpdate(callback: (data: Array<{ timestamp: number; bleDeviceCount: number }>) => void) {
     this.onPerformanceUpdate = callback;
