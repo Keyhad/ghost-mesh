@@ -111,10 +111,10 @@ export class GhostMeshNetwork {
     }, delay);
   }
 
-/**
+  /**
    * Enable Web Bluetooth (must be called from user gesture like button click)
    */
-  async enableWebBluetooth(): Promise<void> {
+  enableWebBluetooth = async (): Promise<void> => {
     if (this.usingWebBluetooth) {
       console.warn('Web Bluetooth already active');
       return;
@@ -151,14 +151,14 @@ export class GhostMeshNetwork {
       this.usingWebBluetooth = false;
       throw error;
     }
-  }
+  };
 
   /**
    * Check if Web Bluetooth is available
    */
-  isWebBluetoothAvailable(): boolean {
+  isWebBluetoothAvailable = (): boolean => {
     return USE_WEB_BLUETOOTH && !this.usingWebBluetooth;
-  }
+  };
 
   private handleServerEvent(event: ServerEvent) {
     switch (event.type) {
