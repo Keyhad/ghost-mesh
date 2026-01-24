@@ -42,10 +42,16 @@
     flex: 1;
     padding: 0.625rem 1rem;
     border-radius: var(--radius-button);
+    border: 1px solid rgb(var(--border-color));
     background-color: rgb(var(--bg-field));
     outline: none;
     font-size: 0.875rem;
     color: rgb(var(--text-primary));
+  }
+
+  .input-field:focus {
+    border-color: rgb(59 130 246);
+    box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
   }
 
   .input-field::placeholder {

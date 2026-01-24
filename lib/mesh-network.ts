@@ -243,7 +243,7 @@ export class GhostMeshNetwork {
     this.onMessageReceived = callback;
   }
 
-  sendMessage(dstId: string, content: string) {
+  sendMessage(dstId: string, content: string, msgId?: number) {
     const message: Message = {
       id: `${Date.now()}-${Math.random()}`,
       srcId: this.myPhone,
@@ -252,6 +252,7 @@ export class GhostMeshNetwork {
       timestamp: Date.now(),
       hops: [this.myPhone],
       ttl: 10,
+      msgId, // Protocol MSG ID (0xFFF0 for SOS)
     };
 
     storage.addMessage(message);
@@ -261,6 +262,7 @@ export class GhostMeshNetwork {
       type: 'send_message',
       to: dstId,
       content,
+      msgId, // Include msgId in transmission
     });
   }
 

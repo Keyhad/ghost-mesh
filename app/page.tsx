@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { storage } from '@/lib/storage';
 import { GhostMeshNetwork } from '@/lib/mesh-network';
-import { Message, Device, Contact } from '@/lib/types';
+import { Message, Device, Contact, SOSLog } from '@/lib/types';
 import { StatusBadge } from '@/components/StatusBadge';
 import { DashboardCard } from '@/components/DashboardCard';
 import { ContactsCard } from '@/components/ContactsCard';
@@ -11,7 +11,11 @@ import { ConversationCard } from '@/components/ConversationCard';
 import { PerMonCard } from '@/components/PerMonCard';
 import { DevicesCard } from '@/components/DevicesCard';
 import { SignalHistogramCard } from '@/components/SignalHistogramCard';
+import { SOSLogCard } from '@/components/SOSLogCard';
 import { WelcomePage } from '@/components/WelcomePage';
+
+// Protocol constants
+const SOS_MSG_ID = 0xFFF0; // MSG ID that identifies SOS emergency messages
 
 type TabKey = 'dashboard' | 'contacts' | 'chats' | 'permon' | 'devices' | 'signal' | string;
 
@@ -28,6 +32,7 @@ export default function Home() {
   const [expandedSections, setExpandedSections] = useState<Set<TabKey>>(new Set(['dashboard']));
   const [meshActive, setMeshActive] = useState(false);
   const [performanceData, setPerformanceData] = useState<Array<{ timestamp: number; bleDeviceCount: number }>>([]);
+  const [sosLogs, setSosLogs] = useState<SOSLog[]>([]);
 
   const toggleSection = (section: TabKey) => {
     const newExpanded = new Set(expandedSections);
@@ -70,6 +75,35 @@ export default function Home() {
     });
     meshNetwork.setOnMessageReceived((message) => {
       setMessages(prev => [...prev, message]);
+
+      // Check if this is a received SOS message by MSG ID (not from ourselves)
+      if (message.msgId === SOS_MSG_ID && message.srcId !== phone) {
+        console.log('SOS received from:', message.srcId, 'my phone:', phone);
+        console.log('Raw SOS Message Object:', message);
+
+        // Convert payload to hex string
+        const payloadHex = Array.from(message.content)
+          .map(char => char.charCodeAt(0).toString(16).padStart(2, '0'))
+          .join('');
+
+        console.log('SOS Received - Payload (hex):', payloadHex);
+
+        // TODO: Parse binary payload when implemented
+        // For now, extract from placeholder or use defaults
+        const newLog: SOSLog = {
+          id: `sos-received-${Date.now()}`,
+          timestamp: Date.now(),
+          direction: 'receive',
+          fromNumber: message.srcId,
+          gpsLocation: '[GPS from binary]', // Will parse from binary data
+          sentTimestamp: new Date(message.timestamp).toLocaleTimeString(),
+          messageId: message.id,
+          payload: payloadHex
+        };
+        setSosLogs(prev => [...prev, newLog]);
+      } else if (message.msgId === SOS_MSG_ID) {
+        console.log('SOS from self, ignoring. srcId:', message.srcId, 'phone:', phone);
+      }
     });
     meshNetwork.setOnStatusChange((active) => {
       setMeshActive(active);
@@ -118,6 +152,101 @@ export default function Home() {
     network.sendMessage(contactPhone, text);
     setMessageText(prev => ({ ...prev, [contactPhone]: '' }));
     setMessages(storage.getMessages());
+  };
+
+  const sendSOS = () => {
+    if (!network) return;
+
+    const now = Date.now();
+
+    // Get GPS location from browser
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          const accuracy = Math.round(position.coords.accuracy);
+
+          console.log(`GPS Location: ${lat}, ${lon} (accuracy: ${accuracy}m)`);
+
+          // TODO: Implement actual binary encoding per protocol:
+          // - 4 bytes: GPS Latitude (float32)
+          // - 4 bytes: GPS Longitude (float32)
+          // - 2 bytes: GPS Accuracy (uint16)
+          // - 8 bytes: Unix timestamp milliseconds (uint64)
+          const binaryPlaceholder = `[GPS:${lat},${lon},${accuracy}m,${now}]`;
+
+          // Send to BROADCAST with MSG ID 0xFFF0 (identifies SOS)
+          network.sendMessage('BROADCAST', binaryPlaceholder, SOS_MSG_ID);
+
+          // Get the message ID from messages
+          const allMessages = storage.getMessages();
+          const lastMessage = allMessages[allMessages.length - 1];
+
+          console.log('Raw SOS Message Object (sent):', lastMessage);
+
+          // Convert payload to hex string for logging
+          const payloadHex = Array.from(binaryPlaceholder)
+            .map(char => char.charCodeAt(0).toString(16).padStart(2, '0'))
+            .join('');
+
+          console.log('SOS Sent - Payload (hex):', payloadHex);
+
+          // Add to SOS log
+          const newLog: SOSLog = {
+            id: `sos-${now}`,
+            timestamp: now,
+            direction: 'sent',
+            gpsLocation: `${lat.toFixed(6)}, ${lon.toFixed(6)}`,
+            sentTimestamp: new Date(now).toLocaleTimeString(),
+            messageId: lastMessage?.id,
+            payload: payloadHex
+          };
+
+          setSosLogs(prev => {
+            const updated = prev.map(log => log.payload ? log : { ...log, payload: '' });
+            return [...updated, newLog];
+          });
+        },
+        (error) => {
+          console.error('GPS Error:', error.message);
+
+          // Fallback: Send without GPS (use 0.0, 0.0 with max accuracy = no GPS)
+          const binaryPlaceholder = `[GPS:0.0,0.0,65535m,${now}]`;
+          network.sendMessage('BROADCAST', binaryPlaceholder, SOS_MSG_ID);
+
+          const allMessages = storage.getMessages();
+          const lastMessage = allMessages[allMessages.length - 1];
+
+          console.log('Raw SOS Message Object (sent, no GPS):', lastMessage);
+
+          const payloadHex = Array.from(binaryPlaceholder)
+            .map(char => char.charCodeAt(0).toString(16).padStart(2, '0'))
+            .join('');
+
+          console.log('SOS Sent (no GPS) - Payload (hex):', payloadHex);
+
+          const newLog: SOSLog = {
+            id: `sos-${now}`,
+            timestamp: now,
+            direction: 'sent',
+            gpsLocation: '[No GPS]',
+            sentTimestamp: new Date(now).toLocaleTimeString(),
+            messageId: lastMessage?.id,
+            payload: payloadHex
+          };
+
+          setSosLogs(prev => {
+            const updated = prev.map(log => log.payload ? log : { ...log, payload: '' });
+            return [...updated, newLog];
+          });
+        },
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+      );
+    } else {
+      console.error('Geolocation not supported');
+      alert('GPS not available in this browser');
+    }
   };
 
   const getContactName = (phoneNumber: string) => {
@@ -224,6 +353,20 @@ export default function Home() {
             newExpanded.add(chatKey);
             setExpandedSections(newExpanded);
           }}
+          systemContacts={contacts.filter(c => c.isSpecial)}
+          onSelectContact={(phoneNumber) => {
+            const chatKey = `chat-${phoneNumber}`;
+            const newExpanded = new Set(expandedSections);
+            newExpanded.add(chatKey);
+            setExpandedSections(newExpanded);
+          }}
+          onSendSOS={sendSOS}
+        />
+
+        <SOSLogCard
+          isExpanded={expandedSections.has('sos-log')}
+          onToggle={() => toggleSection('sos-log')}
+          logs={sosLogs}
         />
 
         <PerMonCard
@@ -274,6 +417,26 @@ export default function Home() {
             onSendMessage={() => sendMessage(phone)}
           />
         ))}
+
+        {/* Empty conversation cards for expanded chats without messages */}
+        {Array.from(expandedSections)
+          .filter(section => section.startsWith('chat-'))
+          .map(section => section.replace('chat-', ''))
+          .filter(phone => !conversations.some(conv => conv.phone === phone))
+          .map(phone => (
+            <ConversationCard
+              key={phone}
+              contactPhone={phone}
+              contactName={getContactName(phone)}
+              messages={[]}
+              myPhone={myPhone}
+              isExpanded={true}
+              onToggle={() => toggleSection(`chat-${phone}`)}
+              messageText={messageText[phone] || ''}
+              onMessageTextChange={(text) => setMessageText(prev => ({ ...prev, [phone]: text }))}
+              onSendMessage={() => sendMessage(phone)}
+            />
+          ))}
       </main>
     </div>
   );

@@ -69,33 +69,62 @@ export const ContactsCard = ({
             {/* Contacts List */}
             <div className="card-section">
               <h3 className="section-heading mb-4">All Contacts</h3>
-              <div className="card-grid card-grid-2">
-                {contacts.length === 0 ? (
-                  <div className="col-span-2 empty-state">
-                    <span className="material-symbols-rounded icon-2xl text-gray-300 dark:text-gray-700 leading-none">
-                      contacts
-                    </span>
-                    <p className="text-caption">No contacts yet</p>
-                  </div>
-                ) : (
-                  contacts.map((contact) => (
+
+              {/* System Contacts */}
+              <div className="mb-4">
+                <p className="text-caption mb-2 text-gray-500 dark:text-gray-400">System</p>
+                <div className="card-grid card-grid-2">
+                  {contacts.filter(c => c.isSpecial).map((contact) => (
                     <button
                       key={contact.phoneNumber}
                       onClick={() => onSelectContact(contact.phoneNumber)}
-                      className="contact-item-btn"
+                      className="contact-item-btn bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30 border-orange-200/50 dark:border-orange-800/50"
                     >
                       <div className="flex-row">
-                        <div className="contact-avatar">
-                          {contact.name[0].toUpperCase()}
+                        <div className="contact-avatar bg-gradient-to-br from-orange-500 to-red-600">
+                          {contact.name[0]}
                         </div>
                         <div className="contact-info">
                           <p className="contact-name">{contact.name}</p>
-                          <p className="contact-phone">{contact.phoneNumber}</p>
+                          <p className="contact-phone text-xs">{contact.phoneNumber}</p>
                         </div>
                       </div>
                     </button>
-                  ))
-                )}
+                  ))}
+                </div>
+              </div>
+
+              {/* User Contacts */}
+              <div>
+                <p className="text-caption mb-2 text-gray-500 dark:text-gray-400">My Contacts</p>
+                <div className="card-grid card-grid-2">
+                  {contacts.filter(c => !c.isSpecial).length === 0 ? (
+                    <div className="col-span-2 empty-state">
+                      <span className="material-symbols-rounded icon-2xl text-gray-300 dark:text-gray-700 leading-none">
+                        contacts
+                      </span>
+                      <p className="text-caption">No contacts yet</p>
+                    </div>
+                  ) : (
+                    contacts.filter(c => !c.isSpecial).map((contact) => (
+                      <button
+                        key={contact.phoneNumber}
+                        onClick={() => onSelectContact(contact.phoneNumber)}
+                        className="contact-item-btn"
+                      >
+                        <div className="flex-row">
+                          <div className="contact-avatar">
+                            {contact.name[0].toUpperCase()}
+                          </div>
+                          <div className="contact-info">
+                            <p className="contact-name">{contact.name}</p>
+                            <p className="contact-phone">{contact.phoneNumber}</p>
+                          </div>
+                        </div>
+                      </button>
+                    ))
+                  )}
+                </div>
               </div>
             </div>
           </div>

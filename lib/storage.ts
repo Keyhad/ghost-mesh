@@ -14,42 +14,55 @@ export const storage = {
     if (typeof window === 'undefined') return null;
     return localStorage.getItem(STORAGE_KEYS.MY_PHONE);
   },
-  
+
   setMyPhone: (phone: string) => {
     if (typeof window === 'undefined') return;
     localStorage.setItem(STORAGE_KEYS.MY_PHONE, phone);
   },
-  
+
   getContacts: (): any[] => {
     if (typeof window === 'undefined') return [];
     const data = localStorage.getItem(STORAGE_KEYS.CONTACTS);
-    return data ? JSON.parse(data) : [];
+    const contacts = data ? JSON.parse(data) : [];
+
+    // Always ensure system contacts exist
+    const hasBroadcast = contacts.some((c: any) => c.phoneNumber === 'BROADCAST');
+    const hasSOS = contacts.some((c: any) => c.phoneNumber === 'SOS');
+
+    if (!hasBroadcast) {
+      contacts.unshift({ phoneNumber: 'BROADCAST', name: '📢 Broadcast', isSpecial: true });
+    }
+    if (!hasSOS) {
+      contacts.unshift({ phoneNumber: 'SOS', name: '🆘 Emergency SOS', isSpecial: true });
+    }
+
+    return contacts;
   },
-  
+
   setContacts: (contacts: any[]) => {
     if (typeof window === 'undefined') return;
     localStorage.setItem(STORAGE_KEYS.CONTACTS, JSON.stringify(contacts));
   },
-  
+
   getMessages: (): Message[] => {
     if (typeof window === 'undefined') return [];
     const data = localStorage.getItem(STORAGE_KEYS.MESSAGES);
     return data ? JSON.parse(data) : [];
   },
-  
+
   addMessage: (message: Message) => {
     if (typeof window === 'undefined') return;
     const messages = storage.getMessages();
     messages.push(message);
     localStorage.setItem(STORAGE_KEYS.MESSAGES, JSON.stringify(messages));
   },
-  
+
   getDevices: (): Device[] => {
     if (typeof window === 'undefined') return [];
     const data = localStorage.getItem(STORAGE_KEYS.DEVICES);
     return data ? JSON.parse(data) : [];
   },
-  
+
   updateDevices: (devices: Device[]) => {
     if (typeof window === 'undefined') return;
     localStorage.setItem(STORAGE_KEYS.DEVICES, JSON.stringify(devices));

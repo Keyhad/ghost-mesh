@@ -27,13 +27,27 @@ export const ConversationCard = ({
 }: ConversationCardProps) => {
   const latestMessage = messages[messages.length - 1];
   const unreadCount = messages.filter(m => m.srcId !== myPhone).length;
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  const subtitle = messages.length > 0
+    ? `${messages.length} messages • ${new Date(latestMessage.timestamp).toLocaleString()}`
+    : 'No messages yet';
+
+  React.useEffect(() => {
+    if (isExpanded && inputRef.current) {
+      // Small delay to ensure the card is fully rendered
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+    }
+  }, [isExpanded]);
 
   return (
     <div className="card-container bg-violet-50/80 dark:bg-violet-950/20 shadow-violet-500/5">
       <CardHeader
         icon="chat"
         title={contactName}
-        subtitle={`${messages.length} messages • ${new Date(latestMessage.timestamp).toLocaleString()}`}
+        subtitle={subtitle}
         gradientFrom="from-violet-500"
         gradientTo="to-fuchsia-600"
         isExpanded={isExpanded}
@@ -72,12 +86,15 @@ export const ConversationCard = ({
             <div className="chat-input-bar">
               <div className="flex-row flex-1">
                 <input
+                  ref={inputRef}
                   type="text"
                   value={messageText}
                   onChange={(e) => onMessageTextChange(e.target.value)}
                   placeholder="Type a message..."
                   className="input-field"
                   onKeyPress={(e) => e.key === 'Enter' && onSendMessage()}
+                  readOnly={false}
+                  autoComplete="off"
                 />
               </div>
               <div>

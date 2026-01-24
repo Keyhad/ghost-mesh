@@ -52,4 +52,21 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
+  /* Contact item button */
+  .contact-item-btn {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: var(--radius-section);
+    border: 1px solid rgb(var(--border-color));
+    background-color: rgb(var(--bg-card));
+    transition: all 0.2s;
+    text-align: left;
+  }
+
+  .contact-item-btn:hover {
+    background-color: rgb(var(--bg-section));
+    border-color: rgb(var(--text-tertiary));
+    transform: translateY(-2px);
+  }
 }

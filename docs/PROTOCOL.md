@@ -182,12 +182,12 @@ Note: All packets have same upper 12 bits (0xABC) but different lower 4 bits (0,
 ```plain
 DST: BROADCAST (0xFFFFFFFFFF)
 SRC: 5551234567
-MSG ID: 0xFFF0 (msg_id=0xFFF for SOS, packet=0)
+MSG ID: 0xFFF0 (identifies SOS emergency)
 HOP COUNT: 255 (maximum propagation)
-DATA: "SOS - injured"
+DATA: [GPS_LAT][GPS_LON][ACCURACY][TIMESTAMP] (18 bytes binary)
 ```
 
-Note: SOS messages use special Message ID range (e.g., 0xF00-0xFFF) for priority identification.
+Note: SOS messages use MSG ID 0xFFF0 for priority identification. The DATA field contains GPS coordinates, accuracy, and timestamp in binary format (no text).
 
 ## SOS Position Determination
 
@@ -197,12 +197,13 @@ Emergency messages require location information to dispatch help effectively. Th
 
 If the sender has GPS available, encode coordinates directly in the DATA field.
 
-**Encoding Format** (10 bytes):
+**Encoding Format** (18 bytes - full DATA payload):
 
 ```plain
 Latitude:  4 bytes (float32) = ±90°  with ~1m precision
 Longitude: 4 bytes (float32) = ±180° with ~1m precision
 Accuracy:  2 bytes (uint16)  = GPS accuracy in meters (0-65535m)
+Timestamp: 8 bytes (uint64)  = Unix timestamp in milliseconds
 ```
 
 **Example SOS with GPS:**
@@ -210,9 +211,9 @@ Accuracy:  2 bytes (uint16)  = GPS accuracy in meters (0-65535m)
 ```plain
 DST: BROADCAST (0xFFFFFFFFFF)
 SRC: 5551234567
-MSG ID: 0xFFF0
+MSG ID: 0xFFF0 (identifies SOS emergency)
 HOP COUNT: 255
-DATA: [GPS_LAT][GPS_LON][ACCURACY]"SOS" (10 bytes GPS + 3 bytes text)
+DATA: [GPS_LAT][GPS_LON][ACCURACY][TIMESTAMP] (18 bytes total)
 ```
 
 **Calculation:**
@@ -224,8 +225,10 @@ Longitude = -122.4194
   → bytes: 0xC2 0xF4 0x6B 0x5C
 Accuracy  = 15 meters
   → bytes: 0x00 0x0F
+Timestamp = 1737734400000 (2026-01-24 12:00:00 UTC)
+  → bytes: 0x00 0x00 0x01 0x94 0xA3 0xE2 0x68 0x00
 
-Total: 10 bytes, leaving 8 bytes for message text
+Total: 18 bytes (full DATA payload)
 ```
 
 ### Method 2: RSSI-Based Trilateration (Fallback)
@@ -327,12 +330,15 @@ Combine multiple methods for best accuracy:
 2. **Fallback**: RSSI trilateration if 3+ nodes with known positions (±10-50m)
 3. **Last Resort**: Hop count estimation (±100-500m)
 
-**SOS Data Packet Priority:**
+**SOS Data Packet Format:**
 
 ```plain
-Byte 0: Location Type (0=none, 1=GPS, 2=RSSI, 3=hop-based)
-Bytes 1-10: Location data (format depends on type)
-Bytes 11-17: Message text (7 bytes)
+Bytes 0-3:   GPS Latitude (float32)
+Bytes 4-7:   GPS Longitude (float32)
+Bytes 8-9:   GPS Accuracy in meters (uint16)
+Bytes 10-17: Unix timestamp in milliseconds (uint64)
+
+Note: If GPS unavailable, set lat/lon to 0 and accuracy to 65535 (max uint16)
 ```
 
 ### Implementation Checklist
@@ -340,9 +346,9 @@ Bytes 11-17: Message text (7 bytes)
 **For SOS Sender:**
 
 - [ ] Check GPS availability
-- [ ] If GPS: Encode lat/lon/accuracy in first 10 bytes
-- [ ] If no GPS: Set location type = 0, let receivers use RSSI
-- [ ] Use MSG ID 0xF00-0xFFF range
+- [ ] Encode lat/lon/accuracy/timestamp in 18-byte binary format
+- [ ] If no GPS: Set lat/lon to 0.0, accuracy to 65535 (indicates no GPS)
+- [ ] Use MSG ID 0xFFF0 (identifies SOS emergency)
 - [ ] Set HOP COUNT to 255 (maximum propagation)
 
 **For Relay Nodes:**

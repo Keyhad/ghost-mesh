@@ -1,5 +1,5 @@
 import React from 'react';
-import { Message, Device } from '@/lib/types';
+import { Message, Device, Contact } from '@/lib/types';
 import { CardHeader } from './CardHeader';
 import { StatCard } from './StatCard';
 import { InputField } from './InputField';
@@ -16,6 +16,9 @@ interface DashboardCardProps {
   onViewAllChats: () => void;
   onUpdatePhone: (newPhone: string) => void;
   onMessageClick: (senderPhone: string) => void;
+  systemContacts?: Contact[];
+  onSelectContact?: (phoneNumber: string) => void;
+  onSendSOS?: () => void;
 }
 
 export const DashboardCard = ({
@@ -30,8 +33,34 @@ export const DashboardCard = ({
   onViewAllChats,
   onUpdatePhone,
   onMessageClick,
+  systemContacts = [],
+  onSelectContact,
+  onSendSOS,
 }: DashboardCardProps) => {
   const [phoneInput, setPhoneInput] = React.useState(myPhone);
+  const [longPressTimer, setLongPressTimer] = React.useState<NodeJS.Timeout | null>(null);
+  const [pressingButton, setPressingButton] = React.useState<string | null>(null);
+
+  const handleLongPressStart = (phoneNumber: string) => {
+    setPressingButton(phoneNumber);
+    const timer = setTimeout(() => {
+      if (phoneNumber === 'SOS' && onSendSOS) {
+        onSendSOS();
+      } else if (onSelectContact) {
+        onSelectContact(phoneNumber);
+      }
+      setPressingButton(null);
+    }, 2000);
+    setLongPressTimer(timer);
+  };
+
+  const handleLongPressEnd = () => {
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      setLongPressTimer(null);
+    }
+    setPressingButton(null);
+  };
 
   const handlePhoneChange = (value: string) => {
     setPhoneInput(value);
@@ -59,6 +88,49 @@ export const DashboardCard = ({
         <div className="card-content">
           {/* All Fields - Unified Grid */}
           <div className="card-grid card-grid-4">
+            {/* Quick Action Buttons */}
+            {systemContacts.length > 0 && onSelectContact && (
+              <>
+                {systemContacts.find(c => c.phoneNumber === 'BROADCAST') && (
+                  <button
+                    onMouseDown={() => handleLongPressStart('BROADCAST')}
+                    onMouseUp={handleLongPressEnd}
+                    onMouseLeave={handleLongPressEnd}
+                    onTouchStart={() => handleLongPressStart('BROADCAST')}
+                    onTouchEnd={handleLongPressEnd}
+                    className={`field-box cursor-pointer transition-all !border-0 hover:shadow-md active:scale-95 relative overflow-hidden ${
+                      pressingButton === 'BROADCAST' ? 'ring-1 ring-red-400 shadow-lg' : ''
+                    }`}
+                  >
+                    {pressingButton === 'BROADCAST' && (
+                      <div className="absolute inset-0 bg-blue-500/10 animate-pulse" />
+                    )}
+                    <span className="material-symbols-rounded icon-xl text-blue-500 relative z-10">cell_tower</span>
+                    <div className="label-text relative z-10">Broadcast</div>
+                  </button>
+                )}
+                {systemContacts.find(c => c.phoneNumber === 'SOS') && (
+                  <button
+                    onMouseDown={() => handleLongPressStart('SOS')}
+                    onMouseUp={handleLongPressEnd}
+                    onMouseLeave={handleLongPressEnd}
+                    onTouchStart={() => handleLongPressStart('SOS')}
+                    onTouchEnd={handleLongPressEnd}
+                    className={`field-box cursor-pointer transition-all !border-0 hover:shadow-md active:scale-95 relative overflow-visible m-1 ${
+                      pressingButton === 'SOS' ? 'ring-1 ring-red-400 shadow-lg' : ''
+                    }`}
+                  >
+                    {pressingButton === 'SOS' && (
+                      <div className="absolute inset-0 bg-red-500/10 animate-pulse" />
+                    )}
+                    <span className="material-symbols-rounded icon-xl text-red-500 relative z-10">sos</span>
+                    <div className="label-text relative z-10">Emergency</div>
+                  </button>
+                )}
+              </>
+            )}
+
+            <br/>
             <InputField
               icon="phone"
               label="Phone Number"
@@ -68,7 +140,6 @@ export const DashboardCard = ({
               type="tel"
               colorScheme="amber"
             />
-
             <StatCard
               label="Network"
               value={connectedCount > 0 ? 'Active' : 'Idle'}
@@ -87,43 +158,7 @@ export const DashboardCard = ({
               icon="chat"
               colorScheme="purple"
             />
-          </div>
 
-          {/* Content Grid */}
-          <div className="card-section">
-            <div className="section-header">
-              <h3 className="section-heading">Recent Messages</h3>
-              <button onClick={onViewAllChats} className="text-link">
-                View all
-              </button>
-            </div>
-            <div className="card-grid card-grid-3">
-              {recentMessages.length === 0 ? (
-                <div className="empty-state">
-                  <span className="material-symbols-rounded icon-2xl text-gray-300 dark:text-gray-700 leading-none">inbox</span>
-                  <p className="text-caption">No messages</p>
-                </div>
-              ) : (
-                recentMessages.map((msg) => (
-                  <button
-                    key={msg.id}
-                    onClick={() => onMessageClick(msg.srcId === myPhone ? msg.destId : msg.srcId)}
-                    className="field-box w-full field-box-clickable"
-                  >
-                    <div className="avatar">
-                      {msg.srcId === myPhone ? getContactName(msg.destId)[0] : getContactName(msg.srcId)[0]}
-                    </div>
-                    <div className="label-text">
-                      {msg.srcId === myPhone ? getContactName(msg.destId) : getContactName(msg.srcId)}
-                    </div>
-                    <p className="text-body line-clamp-2 leading-tight">{msg.content}</p>
-                    <span className="text-micro">
-                      {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  </button>
-                ))
-              )}
-            </div>
           </div>
         </div>
       )}
