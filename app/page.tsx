@@ -415,7 +415,7 @@ export default function Home() {
         {/* Individual Conversation Cards - Sorted by latest message */}
         {conversations.map(({ phone, messages: convMessages }) => (
           <ConversationCard
-            key={phone}
+            key={`conv-${phone}`}
             contactPhone={phone}
             contactName={getContactName(phone)}
             messages={convMessages}
@@ -435,7 +435,7 @@ export default function Home() {
           .filter(phone => !conversations.some(conv => conv.phone === phone))
           .map(phone => (
             <ConversationCard
-              key={phone}
+              key={`empty-${phone}`}
               contactPhone={phone}
               contactName={getContactName(phone)}
               messages={[]}
