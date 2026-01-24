@@ -68,7 +68,12 @@ export class GhostMeshNetwork {
       };
 
       this.ws.onerror = (error) => {
-        console.error('❌ WebSocket error:', error);
+        console.error('❌ WebSocket error:', {
+          type: error.type,
+          message: error.message || 'Connection failed',
+          target: error.target ? 'WebSocket' : undefined
+        });
+        console.warn('💡 Make sure the BLE server is running: npm run dev:server');
       };
 
       this.ws.onclose = () => {
@@ -80,7 +85,9 @@ export class GhostMeshNetwork {
       };
 
     } catch (error) {
-      console.error('Failed to create WebSocket connection:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Failed to create WebSocket connection:', errorMessage);
+      console.warn('💡 Ensure BLE server is running on ws://localhost:8080');
       this.attemptReconnect();
     }
   }
