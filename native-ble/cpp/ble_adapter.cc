@@ -13,7 +13,6 @@
 
 Napi::Value HelloWorld(const Napi::CallbackInfo &info);
 
-
 /**
  * @class BLEAdapter
  * @brief Native BLE Adapter stub for macOS (Node.js N-API)
@@ -29,9 +28,9 @@ public:
    */
   enum class State
   {
-    Unknown,      ///< Unknown state
-    PoweredOn,    ///< Adapter is powered on
-    PoweredOff    ///< Adapter is powered off
+    Unknown,   ///< Unknown state
+    PoweredOn, ///< Adapter is powered on
+    PoweredOff ///< Adapter is powered off
   };
 
   /**

@@ -1,3 +1,5 @@
+
+import '../setup';
 /**
  * Integration tests for advertising and scanning
  * Tests end-to-end communication between devices

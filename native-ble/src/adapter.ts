@@ -64,7 +64,7 @@ export class BLEAdapter extends EventEmitter {
     } else {
       // Load native addon (will be implemented later)
       try {
-        const addon = require('../build/Release/ble_addon.node');
+        const addon = require('../cpp/build/Release/ble_addon.node');
         this.nativeAdapter = new addon.BLEAdapter();
       } catch (err) {
         throw new BLEError(
