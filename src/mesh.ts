@@ -543,17 +543,22 @@ export class MeshNode extends EventEmitter {
         manufacturerData
       ]);
 
+      logger.info('📡 Attempting EIR advertising with manufacturer data:', manufacturerData.toString('hex').substring(0, 40) + '...');
+
       BlenoPlatformBindings.startAdvertisingWithEIRData(eirData, (error: any) => {
         if (error) {
-          logger.error('EIR advertising error:', error);
+          logger.error('❌ EIR advertising failed:', error.message);
+          logger.warn('⚠️  Falling back to name-only advertising (no message data will be transmitted)');
           // Fallback to regular advertising
           this.fallbackAdvertising();
         } else {
           this.isAdvertising = true;
+          logger.info('✅ EIR advertising started - manufacturer data should be visible');
         }
       });
     } else {
       // Fallback: Standard advertising (name only)
+      logger.warn('⚠️  EIR not available - using fallback advertising (name only, no message data)');
       this.fallbackAdvertising();
     }
 

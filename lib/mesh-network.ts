@@ -1,3 +1,112 @@
+// --- Data Processing Functions (Phase 2) ---
+import type { Message } from './types';
+
+/**
+ * Encode a message object into a Buffer suitable for BLE manufacturer data
+ */
+export function encodeManufacturerData(message: Message): Buffer {
+  // Drop '+' from phone numbers to save space
+  const msg = {
+    ...message,
+    srcId: message.srcId.replace(/^\+/, ''),
+    dstId: message.dstId.replace(/^\+/, ''),
+    hops: Array.isArray(message.hops)
+      ? message.hops.map(h => h.replace(/^\+/, ''))
+      : [],
+  };
+  // Use compact JSON encoding (could be replaced with binary for more efficiency)
+  const json = JSON.stringify(msg);
+  const buf = Buffer.from(json, 'utf8');
+  // BLE manufacturer data max is 27 bytes, truncate if needed
+  if (buf.length > 27) {
+    throw new Error('Message too large for BLE manufacturer data');
+  }
+  return buf;
+}
+
+/**
+ * Decode manufacturer data Buffer into a message object
+ */
+export function decodeManufacturerData(buf: Buffer): Message {
+  try {
+    const json = buf.toString('utf8');
+    const msg = JSON.parse(json);
+    // Restore '+' to phone numbers
+    return {
+      ...msg,
+      srcId: msg.srcId.startsWith('+') ? msg.srcId : '+' + msg.srcId,
+      dstId: msg.dstId.startsWith('+') ? msg.dstId : '+' + msg.dstId,
+      hops: Array.isArray(msg.hops)
+        ? msg.hops.map((h: string) => h.startsWith('+') ? h : '+' + h)
+        : [],
+    };
+  } catch (e) {
+    throw new Error('Invalid manufacturer data');
+  }
+}
+}
+
+/**
+ * Validate and normalize a BLE service UUID
+ */
+export function validateServiceUUID(uuid: string): string {
+  if (!uuid || typeof uuid !== 'string') throw new Error('Invalid UUID');
+  const u = uuid.trim().toLowerCase();
+  // 16-bit UUID (4 hex digits)
+  if (/^[0-9a-f]{4}$/.test(u)) {
+    return `0000${u}-0000-1000-8000-00805f9b34fb`;
+  }
+  // 128-bit UUID (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
+  if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(u)) {
+    return u;
+  }
+  throw new Error('Invalid UUID format');
+}
+
+/**
+ * Parse a BLE advertisement and extract mesh message if present
+ */
+export function parseDeviceAdvertisement(advertisement: any): Message | null {
+  // Accept noble/bleno/ble format: advertisement.manufacturerData (Buffer)
+  if (!advertisement || !advertisement.manufacturerData) return null;
+  const buf = advertisement.manufacturerData;
+  if (!Buffer.isBuffer(buf) || buf.length === 0) return null;
+  try {
+    return decodeManufacturerData(buf);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Serialize a message object to Buffer
+ */
+export function serializeMessage(message: Message): Buffer {
+  // Use same encoding as manufacturer data for now
+  return encodeManufacturerData(message);
+}
+
+/**
+ * Deserialize Buffer to message object
+ */
+export function deserializeMessage(buf: Buffer): Message {
+  return decodeManufacturerData(buf);
+}
+
+/**
+ * Byte-wise phone number match
+ */
+export function matchPhoneNumber(a: string, b: string): boolean {
+  // Simple byte-wise string match (no '+')
+  return typeof a === 'string' && typeof b === 'string' && a === b;
+}
+
+/**
+ * Message ID match for deduplication
+ */
+export function matchMessageId(a: string, b: string): boolean {
+  return typeof a === 'string' && typeof b === 'string' && a === b;
+}
 'use client';
 
 import { Message, Device } from './types';
