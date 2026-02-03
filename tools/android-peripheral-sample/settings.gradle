@@ -1,0 +1,2 @@
+rootProject.name = 'android-peripheral-sample'
+include ':app'
