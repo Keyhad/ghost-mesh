@@ -1,0 +1,96 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.ghostmesh.peripheraltest"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="21"
+9        android:targetSdkVersion="33" />
+10
+11    <uses-permission android:name="android.permission.BLUETOOTH" />
+11-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:4:3-66
+11-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:4:20-63
+12    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+12-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:5:3-72
+12-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:5:20-69
+13    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+13-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:6:3-76
+13-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:6:20-73
+14    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+14-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:7:3-74
+14-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:7:20-71
+15
+16    <uses-feature
+16-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:9:3-89
+17        android:name="android.hardware.bluetooth_le"
+17-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:9:17-61
+18        android:required="false" />
+18-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:9:62-86
+19
+20    <permission
+20-->[androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:22:5-24:47
+21        android:name="com.ghostmesh.peripheraltest.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+21-->[androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:23:9-81
+22        android:protectionLevel="signature" />
+22-->[androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:24:9-44
+23
+24    <uses-permission android:name="com.ghostmesh.peripheraltest.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+24-->[androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:26:5-97
+24-->[androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:26:22-94
+25
+26    <application
+26-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:11:3-21:17
+27        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+27-->[androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:28:18-86
+28        android:debuggable="true"
+29        android:extractNativeLibs="true"
+30        android:icon="@mipmap/"
+30-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:12:7-30
+31        android:label="GMesh Heart Rate"
+31-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:13:7-39
+32        android:testOnly="true"
+33        android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
+33-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:13:40-96
+34        <activity
+34-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:14:5-20:16
+35            android:name="com.ghostmesh.heartrateperipheral.MainActivity"
+35-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:14:15-76
+36            android:exported="true" >
+36-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:15:9-32
+37            <intent-filter>
+37-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:16:7-19:23
+38                <action android:name="android.intent.action.MAIN" />
+38-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:17:9-61
+38-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:17:17-58
+39
+40                <category android:name="android.intent.category.LAUNCHER" />
+40-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:18:9-69
+40-->/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:18:19-66
+41            </intent-filter>
+42        </activity>
+43
+44        <provider
+44-->[androidx.emoji2:emoji2:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f3702c1521368a449ee586b7b2b0f03e/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:24:9-32:20
+45            android:name="androidx.startup.InitializationProvider"
+45-->[androidx.emoji2:emoji2:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f3702c1521368a449ee586b7b2b0f03e/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:25:13-67
+46            android:authorities="com.ghostmesh.peripheraltest.androidx-startup"
+46-->[androidx.emoji2:emoji2:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f3702c1521368a449ee586b7b2b0f03e/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:26:13-68
+47            android:exported="false" >
+47-->[androidx.emoji2:emoji2:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f3702c1521368a449ee586b7b2b0f03e/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:27:13-37
+48            <meta-data
+48-->[androidx.emoji2:emoji2:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f3702c1521368a449ee586b7b2b0f03e/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:29:13-31:52
+49                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+49-->[androidx.emoji2:emoji2:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f3702c1521368a449ee586b7b2b0f03e/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:30:17-75
+50                android:value="androidx.startup" />
+50-->[androidx.emoji2:emoji2:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f3702c1521368a449ee586b7b2b0f03e/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:31:17-49
+51            <meta-data
+51-->[androidx.lifecycle:lifecycle-process:2.4.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/e3486aa1b51a1dd0b5992ed7a3dac27c/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:31:13-33:52
+52                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+52-->[androidx.lifecycle:lifecycle-process:2.4.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/e3486aa1b51a1dd0b5992ed7a3dac27c/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:32:17-78
+53                android:value="androidx.startup" />
+53-->[androidx.lifecycle:lifecycle-process:2.4.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/e3486aa1b51a1dd0b5992ed7a3dac27c/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:33:17-49
+54        </provider>
+55    </application>
+56
+57</manifest>

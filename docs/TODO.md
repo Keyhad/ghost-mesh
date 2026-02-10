@@ -358,3 +358,11 @@
 
 ---
 *Last updated: January 22, 2026*
+
+Next recommended actions (pick one)
+
+Add unit tests for parseMeshPacket() and MessageAssembler (I can add them).
+Implement timeout/cleanup and completed-message callback logic in MessageAssembler.
+Change endianness assumptions if needed.
+Run full test suite (note: native integration tests require BLE hardware).
+Which should I do next?

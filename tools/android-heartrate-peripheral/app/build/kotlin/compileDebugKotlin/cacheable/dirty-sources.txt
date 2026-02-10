@@ -1,0 +1,1 @@
+/Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/java/com/ghostmesh/heartrateperipheral/MainActivity.kt

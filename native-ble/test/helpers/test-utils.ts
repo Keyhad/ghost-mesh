@@ -3,6 +3,7 @@
  */
 
 import type { DiscoveredDevice } from '../mocks/ble-adapter.mock';
+import { parseManufacturerData as _parseManufacturerData } from '../../src';
 
 /**
  * Create a test manufacturer data buffer
@@ -30,6 +31,11 @@ export function createMockDevice(options: Partial<DiscoveredDevice> = {}): Disco
     serviceUUIDs: options.serviceUUIDs || [],
     timestamp: options.timestamp || Date.now(),
   };
+}
+
+export function parseManufacturerData(buffer?: Buffer) {
+  if (!buffer) return null;
+  return _parseManufacturerData(buffer);
 }
 
 /**

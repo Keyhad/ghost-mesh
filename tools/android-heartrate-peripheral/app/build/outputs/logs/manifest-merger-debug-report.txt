@@ -1,0 +1,253 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:2:1-22:12
+INJECTED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:2:1-22:12
+INJECTED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:2:1-22:12
+INJECTED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:2:1-22:12
+MERGED from [com.google.android.material:material:1.8.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/56e9da7576a12f3cf1b9982e9c69c06b/transformed/material-1.8.0/AndroidManifest.xml:17:1-26:12
+MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/2f71bc3595ed7493d1f2d70c9a9dd65a/transformed/jetified-appcompat-resources-1.6.1/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.constraintlayout:constraintlayout:2.0.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/2a01d1eceb9aacb2356cae32e6e4b9f7/transformed/constraintlayout-2.0.1/AndroidManifest.xml:2:1-11:12
+MERGED from [androidx.appcompat:appcompat:1.6.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/bac061ff7444d4e4423987d37b26009c/transformed/appcompat-1.6.1/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.viewpager2:viewpager2:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/71ca1ba9b621a1fca535ff01db7f84dc/transformed/jetified-viewpager2-1.0.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.fragment:fragment:1.3.6] /Users/keyvan/.gradle/caches/9.1.0/transforms/33ce9ee3238a822b0334005a9d7865c7/transformed/fragment-1.3.6/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.activity:activity:1.6.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/89a625de4397e0781b60d638e56805ab/transformed/jetified-activity-1.6.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.emoji2:emoji2-views-helper:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/3665b52d9640091749156fbbf7159c6c/transformed/jetified-emoji2-views-helper-1.2.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.emoji2:emoji2:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f3702c1521368a449ee586b7b2b0f03e/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:17:1-35:12
+MERGED from [androidx.drawerlayout:drawerlayout:1.1.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/954a3ffe1d3607c4005bd0ced996048c/transformed/drawerlayout-1.1.1/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.1.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/e7c4d99450e575ee0285794de7723a2f/transformed/coordinatorlayout-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.dynamicanimation:dynamicanimation:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/be763251f03c2fa5485a71dde7dc7782/transformed/dynamicanimation-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.transition:transition:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/eb12710d8879ad0f24838fdca4a63669/transformed/transition-1.2.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/7d5c8b5046b8e339cde533280f983575/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/dcccebbe099758b361fa8ee3f9860902/transformed/vectordrawable-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/b6befe66c1a9d4f394bd70b4953ad042/transformed/viewpager-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/bd4d0cebdcb74477ddc94247501bdcfb/transformed/legacy-support-core-utils-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.loader:loader:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/40e9a9f2960839de10e2cb0d60c76401/transformed/loader-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.recyclerview:recyclerview:1.1.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f1d103bf99750370609ba512da718b99/transformed/recyclerview-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.customview:customview:1.1.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/007b4bccec870549df2169a168c656da/transformed/customview-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:17:1-30:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.5.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/51136eed2ed517b70497d79e4f604b41/transformed/lifecycle-viewmodel-2.5.1/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.5.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/53726f7aa34b2c865a7b96b47e070f84/transformed/jetified-lifecycle-viewmodel-savedstate-2.5.1/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.core:core-ktx:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/2dca7f80c9ec97f89aaedba6bb92f250/transformed/jetified-core-ktx-1.9.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.savedstate:savedstate:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/4bb96c9f24b85f65ae597959ddb99d93/transformed/jetified-savedstate-1.2.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.annotation:annotation-experimental:1.3.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/e64e8298d71ed8397b00e48978d4e8e1/transformed/jetified-annotation-experimental-1.3.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/ec9d43bd9f5728c3730526230385f4dc/transformed/cursoradapter-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-process:2.4.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/e3486aa1b51a1dd0b5992ed7a3dac27c/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:17:1-37:12
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.5.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/6bec7cd5bba17eb9eceb997c9b9da30d/transformed/lifecycle-runtime-2.5.1/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.cardview:cardview:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/680fdceb6122fa16495ce9ade09489fe/transformed/cardview-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/e869ef1bf253c121a81b73ad624d26fd/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:17:1-27:12
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/c2083e7e0087a92d8e6969fa9b99a5f9/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:17:1-33:12
+MERGED from [androidx.tracing:tracing:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f4e1c1d39a9f5f8f9ba010a78a36bf2f/transformed/jetified-tracing-1.0.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/dbd7d555f30f27ebcca6229ecf4aed2e/transformed/lifecycle-livedata-2.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.5.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/5b60b7d71c96318449ff126b49e2e781/transformed/lifecycle-livedata-core-2.5.1/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.arch.core:core-runtime:2.1.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/36234cfe009f8d44220ef60aa5c24da2/transformed/core-runtime-2.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/e360e4626730ff8f808bcd87efb10973/transformed/interpolator-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.documentfile:documentfile:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/1bd81ab90cb0d375f85a61272c317816/transformed/documentfile-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/ed5841a9dbadb88bcd56eebb912f6574/transformed/localbroadcastmanager-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.print:print:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/2eab11196d7284f3e71b63332cd93894/transformed/print-1.0.0/AndroidManifest.xml:17:1-22:12
+	package
+		INJECTED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml
+	android:versionCode
+		INJECTED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:2:11-69
+uses-permission#android.permission.BLUETOOTH
+ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:4:3-66
+	android:name
+		ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:4:20-63
+uses-permission#android.permission.BLUETOOTH_ADMIN
+ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:5:3-72
+	android:name
+		ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:5:20-69
+uses-permission#android.permission.BLUETOOTH_ADVERTISE
+ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:6:3-76
+	android:name
+		ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:6:20-73
+uses-permission#android.permission.BLUETOOTH_CONNECT
+ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:7:3-74
+	android:name
+		ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:7:20-71
+uses-feature#android.hardware.bluetooth_le
+ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:9:3-89
+	android:required
+		ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:9:62-86
+	android:name
+		ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:9:17-61
+application
+ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:11:3-21:17
+INJECTED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:11:3-21:17
+MERGED from [com.google.android.material:material:1.8.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/56e9da7576a12f3cf1b9982e9c69c06b/transformed/material-1.8.0/AndroidManifest.xml:24:5-20
+MERGED from [com.google.android.material:material:1.8.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/56e9da7576a12f3cf1b9982e9c69c06b/transformed/material-1.8.0/AndroidManifest.xml:24:5-20
+MERGED from [androidx.constraintlayout:constraintlayout:2.0.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/2a01d1eceb9aacb2356cae32e6e4b9f7/transformed/constraintlayout-2.0.1/AndroidManifest.xml:9:5-20
+MERGED from [androidx.constraintlayout:constraintlayout:2.0.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/2a01d1eceb9aacb2356cae32e6e4b9f7/transformed/constraintlayout-2.0.1/AndroidManifest.xml:9:5-20
+MERGED from [androidx.emoji2:emoji2:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f3702c1521368a449ee586b7b2b0f03e/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.emoji2:emoji2:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f3702c1521368a449ee586b7b2b0f03e/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:28:5-89
+MERGED from [androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:28:5-89
+MERGED from [androidx.lifecycle:lifecycle-process:2.4.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/e3486aa1b51a1dd0b5992ed7a3dac27c/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:25:5-35:19
+MERGED from [androidx.lifecycle:lifecycle-process:2.4.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/e3486aa1b51a1dd0b5992ed7a3dac27c/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:25:5-35:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/e869ef1bf253c121a81b73ad624d26fd/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/e869ef1bf253c121a81b73ad624d26fd/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/c2083e7e0087a92d8e6969fa9b99a5f9/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:25:5-31:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/c2083e7e0087a92d8e6969fa9b99a5f9/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:25:5-31:19
+	android:extractNativeLibs
+		INJECTED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml
+	android:appComponentFactory
+		ADDED from [androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:28:18-86
+	android:label
+		ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:13:7-39
+	android:icon
+		ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:12:7-30
+	android:theme
+		ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:13:40-96
+activity#com.ghostmesh.heartrateperipheral.MainActivity
+ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:14:5-20:16
+	android:exported
+		ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:15:9-32
+	android:name
+		ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:14:15-76
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:16:7-19:23
+action#android.intent.action.MAIN
+ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:17:9-61
+	android:name
+		ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:17:17-58
+category#android.intent.category.LAUNCHER
+ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:18:9-69
+	android:name
+		ADDED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml:18:19-66
+uses-sdk
+INJECTED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml
+INJECTED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml
+MERGED from [com.google.android.material:material:1.8.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/56e9da7576a12f3cf1b9982e9c69c06b/transformed/material-1.8.0/AndroidManifest.xml:20:5-22:41
+MERGED from [com.google.android.material:material:1.8.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/56e9da7576a12f3cf1b9982e9c69c06b/transformed/material-1.8.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/2f71bc3595ed7493d1f2d70c9a9dd65a/transformed/jetified-appcompat-resources-1.6.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/2f71bc3595ed7493d1f2d70c9a9dd65a/transformed/jetified-appcompat-resources-1.6.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.constraintlayout:constraintlayout:2.0.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/2a01d1eceb9aacb2356cae32e6e4b9f7/transformed/constraintlayout-2.0.1/AndroidManifest.xml:5:5-7:41
+MERGED from [androidx.constraintlayout:constraintlayout:2.0.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/2a01d1eceb9aacb2356cae32e6e4b9f7/transformed/constraintlayout-2.0.1/AndroidManifest.xml:5:5-7:41
+MERGED from [androidx.appcompat:appcompat:1.6.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/bac061ff7444d4e4423987d37b26009c/transformed/appcompat-1.6.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.appcompat:appcompat:1.6.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/bac061ff7444d4e4423987d37b26009c/transformed/appcompat-1.6.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager2:viewpager2:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/71ca1ba9b621a1fca535ff01db7f84dc/transformed/jetified-viewpager2-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.viewpager2:viewpager2:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/71ca1ba9b621a1fca535ff01db7f84dc/transformed/jetified-viewpager2-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.fragment:fragment:1.3.6] /Users/keyvan/.gradle/caches/9.1.0/transforms/33ce9ee3238a822b0334005a9d7865c7/transformed/fragment-1.3.6/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.fragment:fragment:1.3.6] /Users/keyvan/.gradle/caches/9.1.0/transforms/33ce9ee3238a822b0334005a9d7865c7/transformed/fragment-1.3.6/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.activity:activity:1.6.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/89a625de4397e0781b60d638e56805ab/transformed/jetified-activity-1.6.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity:1.6.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/89a625de4397e0781b60d638e56805ab/transformed/jetified-activity-1.6.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.emoji2:emoji2-views-helper:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/3665b52d9640091749156fbbf7159c6c/transformed/jetified-emoji2-views-helper-1.2.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.emoji2:emoji2-views-helper:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/3665b52d9640091749156fbbf7159c6c/transformed/jetified-emoji2-views-helper-1.2.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.emoji2:emoji2:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f3702c1521368a449ee586b7b2b0f03e/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:21:5-44
+MERGED from [androidx.emoji2:emoji2:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f3702c1521368a449ee586b7b2b0f03e/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:21:5-44
+MERGED from [androidx.drawerlayout:drawerlayout:1.1.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/954a3ffe1d3607c4005bd0ced996048c/transformed/drawerlayout-1.1.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.drawerlayout:drawerlayout:1.1.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/954a3ffe1d3607c4005bd0ced996048c/transformed/drawerlayout-1.1.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.1.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/e7c4d99450e575ee0285794de7723a2f/transformed/coordinatorlayout-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.1.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/e7c4d99450e575ee0285794de7723a2f/transformed/coordinatorlayout-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.dynamicanimation:dynamicanimation:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/be763251f03c2fa5485a71dde7dc7782/transformed/dynamicanimation-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.dynamicanimation:dynamicanimation:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/be763251f03c2fa5485a71dde7dc7782/transformed/dynamicanimation-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.transition:transition:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/eb12710d8879ad0f24838fdca4a63669/transformed/transition-1.2.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.transition:transition:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/eb12710d8879ad0f24838fdca4a63669/transformed/transition-1.2.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/7d5c8b5046b8e339cde533280f983575/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/7d5c8b5046b8e339cde533280f983575/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/dcccebbe099758b361fa8ee3f9860902/transformed/vectordrawable-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/dcccebbe099758b361fa8ee3f9860902/transformed/vectordrawable-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/b6befe66c1a9d4f394bd70b4953ad042/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/b6befe66c1a9d4f394bd70b4953ad042/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/bd4d0cebdcb74477ddc94247501bdcfb/transformed/legacy-support-core-utils-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/bd4d0cebdcb74477ddc94247501bdcfb/transformed/legacy-support-core-utils-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/40e9a9f2960839de10e2cb0d60c76401/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/40e9a9f2960839de10e2cb0d60c76401/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.recyclerview:recyclerview:1.1.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f1d103bf99750370609ba512da718b99/transformed/recyclerview-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.recyclerview:recyclerview:1.1.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f1d103bf99750370609ba512da718b99/transformed/recyclerview-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.customview:customview:1.1.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/007b4bccec870549df2169a168c656da/transformed/customview-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.customview:customview:1.1.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/007b4bccec870549df2169a168c656da/transformed/customview-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.5.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/51136eed2ed517b70497d79e4f604b41/transformed/lifecycle-viewmodel-2.5.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.5.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/51136eed2ed517b70497d79e4f604b41/transformed/lifecycle-viewmodel-2.5.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.5.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/53726f7aa34b2c865a7b96b47e070f84/transformed/jetified-lifecycle-viewmodel-savedstate-2.5.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.5.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/53726f7aa34b2c865a7b96b47e070f84/transformed/jetified-lifecycle-viewmodel-savedstate-2.5.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.core:core-ktx:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/2dca7f80c9ec97f89aaedba6bb92f250/transformed/jetified-core-ktx-1.9.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.core:core-ktx:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/2dca7f80c9ec97f89aaedba6bb92f250/transformed/jetified-core-ktx-1.9.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/4bb96c9f24b85f65ae597959ddb99d93/transformed/jetified-savedstate-1.2.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.savedstate:savedstate:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/4bb96c9f24b85f65ae597959ddb99d93/transformed/jetified-savedstate-1.2.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.annotation:annotation-experimental:1.3.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/e64e8298d71ed8397b00e48978d4e8e1/transformed/jetified-annotation-experimental-1.3.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.3.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/e64e8298d71ed8397b00e48978d4e8e1/transformed/jetified-annotation-experimental-1.3.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/ec9d43bd9f5728c3730526230385f4dc/transformed/cursoradapter-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/ec9d43bd9f5728c3730526230385f4dc/transformed/cursoradapter-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-process:2.4.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/e3486aa1b51a1dd0b5992ed7a3dac27c/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.lifecycle:lifecycle-process:2.4.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/e3486aa1b51a1dd0b5992ed7a3dac27c/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.5.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/6bec7cd5bba17eb9eceb997c9b9da30d/transformed/lifecycle-runtime-2.5.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.5.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/6bec7cd5bba17eb9eceb997c9b9da30d/transformed/lifecycle-runtime-2.5.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.cardview:cardview:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/680fdceb6122fa16495ce9ade09489fe/transformed/cardview-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.cardview:cardview:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/680fdceb6122fa16495ce9ade09489fe/transformed/cardview-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/e869ef1bf253c121a81b73ad624d26fd/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/e869ef1bf253c121a81b73ad624d26fd/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/c2083e7e0087a92d8e6969fa9b99a5f9/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/c2083e7e0087a92d8e6969fa9b99a5f9/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.tracing:tracing:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f4e1c1d39a9f5f8f9ba010a78a36bf2f/transformed/jetified-tracing-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.tracing:tracing:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f4e1c1d39a9f5f8f9ba010a78a36bf2f/transformed/jetified-tracing-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/dbd7d555f30f27ebcca6229ecf4aed2e/transformed/lifecycle-livedata-2.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/dbd7d555f30f27ebcca6229ecf4aed2e/transformed/lifecycle-livedata-2.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.5.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/5b60b7d71c96318449ff126b49e2e781/transformed/lifecycle-livedata-core-2.5.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.5.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/5b60b7d71c96318449ff126b49e2e781/transformed/lifecycle-livedata-core-2.5.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.arch.core:core-runtime:2.1.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/36234cfe009f8d44220ef60aa5c24da2/transformed/core-runtime-2.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.arch.core:core-runtime:2.1.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/36234cfe009f8d44220ef60aa5c24da2/transformed/core-runtime-2.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/e360e4626730ff8f808bcd87efb10973/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/e360e4626730ff8f808bcd87efb10973/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.documentfile:documentfile:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/1bd81ab90cb0d375f85a61272c317816/transformed/documentfile-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.documentfile:documentfile:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/1bd81ab90cb0d375f85a61272c317816/transformed/documentfile-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/ed5841a9dbadb88bcd56eebb912f6574/transformed/localbroadcastmanager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/ed5841a9dbadb88bcd56eebb912f6574/transformed/localbroadcastmanager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.print:print:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/2eab11196d7284f3e71b63332cd93894/transformed/print-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.print:print:1.0.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/2eab11196d7284f3e71b63332cd93894/transformed/print-1.0.0/AndroidManifest.xml:20:5-44
+	android:targetSdkVersion
+		INJECTED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/keyvan/Projects/ghost-mesh/tools/android-heartrate-peripheral/app/src/main/AndroidManifest.xml
+provider#androidx.startup.InitializationProvider
+ADDED from [androidx.emoji2:emoji2:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f3702c1521368a449ee586b7b2b0f03e/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.4.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/e3486aa1b51a1dd0b5992ed7a3dac27c/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:26:9-34:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.4.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/e3486aa1b51a1dd0b5992ed7a3dac27c/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:26:9-34:20
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/c2083e7e0087a92d8e6969fa9b99a5f9/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:26:9-30:34
+MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/c2083e7e0087a92d8e6969fa9b99a5f9/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:26:9-30:34
+	tools:node
+		ADDED from [androidx.emoji2:emoji2:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f3702c1521368a449ee586b7b2b0f03e/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:28:13-31
+	android:authorities
+		ADDED from [androidx.emoji2:emoji2:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f3702c1521368a449ee586b7b2b0f03e/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:26:13-68
+	android:exported
+		ADDED from [androidx.emoji2:emoji2:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f3702c1521368a449ee586b7b2b0f03e/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:27:13-37
+	android:name
+		ADDED from [androidx.emoji2:emoji2:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f3702c1521368a449ee586b7b2b0f03e/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:25:13-67
+meta-data#androidx.emoji2.text.EmojiCompatInitializer
+ADDED from [androidx.emoji2:emoji2:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f3702c1521368a449ee586b7b2b0f03e/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.emoji2:emoji2:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f3702c1521368a449ee586b7b2b0f03e/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.emoji2:emoji2:1.2.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f3702c1521368a449ee586b7b2b0f03e/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:30:17-75
+permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:22:5-24:47
+	android:protectionLevel
+		ADDED from [androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:24:9-44
+	android:name
+		ADDED from [androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:23:9-81
+permission#com.ghostmesh.peripheraltest.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:22:5-24:47
+	android:protectionLevel
+		ADDED from [androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:24:9-44
+	android:name
+		ADDED from [androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:23:9-81
+uses-permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:26:5-97
+	android:name
+		ADDED from [androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:26:22-94
+uses-permission#com.ghostmesh.peripheraltest.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:26:5-97
+	android:name
+		ADDED from [androidx.core:core:1.9.0] /Users/keyvan/.gradle/caches/9.1.0/transforms/f077a9564ca2df592a1b5f97ac57010f/transformed/core-1.9.0/AndroidManifest.xml:26:22-94
+meta-data#androidx.lifecycle.ProcessLifecycleInitializer
+ADDED from [androidx.lifecycle:lifecycle-process:2.4.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/e3486aa1b51a1dd0b5992ed7a3dac27c/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:31:13-33:52
+	android:value
+		ADDED from [androidx.lifecycle:lifecycle-process:2.4.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/e3486aa1b51a1dd0b5992ed7a3dac27c/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:33:17-49
+	android:name
+		ADDED from [androidx.lifecycle:lifecycle-process:2.4.1] /Users/keyvan/.gradle/caches/9.1.0/transforms/e3486aa1b51a1dd0b5992ed7a3dac27c/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:32:17-78

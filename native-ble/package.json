@@ -13,7 +13,9 @@
     "test:watch": "jest --watch",
     "lint": "eslint src --ext .ts",
     "format": "prettier --write 'src/**/*.ts'",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "scan:real": "node tools/scan-real.js",
+    "advertise:real": "node tools/advertise-real.js"
   },
   "keywords": [
     "bluetooth",
@@ -42,6 +44,8 @@
   ],
   "gypfile": true,
   "dependencies": {
+    "@abandonware/bleno": "^0.6.2",
+    "@abandonware/noble": "^1.9.2-26",
     "node-addon-api": "^8.0.0"
   },
   "devDependencies": {

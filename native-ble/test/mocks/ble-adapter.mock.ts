@@ -41,6 +41,9 @@ export class MockBLEAdapterNative extends EventEmitter {
   // Simulated devices for testing
   private mockDevices: DiscoveredDevice[] = [];
 
+  // Registry of instances for cross-instance notifications
+  private static instances: MockBLEAdapterNative[] = [];
+
   // Test controls
   public simulatedDelay = 100; // ms
   public shouldFailNextOperation = false;
@@ -48,6 +51,7 @@ export class MockBLEAdapterNative extends EventEmitter {
 
   constructor() {
     super();
+    MockBLEAdapterNative.instances.push(this);
   }
 
   /**
@@ -69,6 +73,14 @@ export class MockBLEAdapterNative extends EventEmitter {
    */
   simulateStateChange(newState: BLEState): void {
     this.state = newState;
+    // Stop advertising/scanning when powered off
+    if (newState === 'poweredOff') {
+      this.isAdvertising = false;
+      this.isScanning = false;
+      this.advertisingData = null;
+      this.emit('advertisingStopped');
+      this.emit('scanningStopped');
+    }
     this.emit('stateChange', newState);
   }
 
@@ -120,6 +132,15 @@ export class MockBLEAdapterNative extends EventEmitter {
     this.advertisingData = options;
     this.isAdvertising = true;
     this.emit('advertisingStarted', options);
+
+    // Notify scanning instances that a new advertiser is present
+    setTimeout(() => {
+      for (const inst of MockBLEAdapterNative.instances) {
+        if (inst !== this && inst.isScanning) {
+          inst.startDiscoveringDevices();
+        }
+      }
+    }, this.simulatedDelay);
   }
 
   /**
@@ -146,6 +167,15 @@ export class MockBLEAdapterNative extends EventEmitter {
     }
 
     this.emit('advertisingDataUpdated', data);
+
+    // Notify other mock adapters that advertising data changed so scanners can rediscover
+    setTimeout(() => {
+      for (const inst of MockBLEAdapterNative.instances) {
+        if (inst !== this && inst.isScanning) {
+          inst.startDiscoveringDevices();
+        }
+      }
+    }, this.simulatedDelay);
   }
 
   /**
@@ -226,6 +256,8 @@ export class MockBLEAdapterNative extends EventEmitter {
     await this.stopAdvertising();
     await this.stopScanning();
     this.removeAllListeners();
+    const idx = MockBLEAdapterNative.instances.indexOf(this);
+    if (idx !== -1) MockBLEAdapterNative.instances.splice(idx, 1);
   }
 
   // Private helpers
@@ -246,6 +278,11 @@ export class MockBLEAdapterNative extends EventEmitter {
         }
       }
     }, this.simulatedDelay * 2);
+  }
+
+  // Expose for cross-instance notifications
+  public startDiscoveringDevicesPublic(): void {
+    this.startDiscoveringDevices();
   }
 
   private shouldDeviceBeReported(device: DiscoveredDevice): boolean {

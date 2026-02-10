@@ -11,6 +11,8 @@ import {
   DiscoveredDevice,
   BLEAdapterEvents,
 } from './types';
+import { parseManufacturerData } from './manufacturer';
+import { parseMeshPacket } from './mesh';
 
 /**
  * TypeScript interface for the native BLE adapter
@@ -273,6 +275,22 @@ export class BLEAdapter extends EventEmitter {
     });
 
     this.nativeAdapter.on('deviceDiscovered', (device: DiscoveredDevice) => {
+      // Parse manufacturer data at higher level and attach productInfo
+      try {
+        const parsed = parseManufacturerData(device.manufacturerData as Buffer);
+        (device as any).manufacturer = parsed;
+
+        // Parse mesh packet if present
+        try {
+          const mesh = parseMeshPacket(device.manufacturerData as Buffer);
+          if (mesh) (device as any).meshPacket = mesh;
+        } catch (e) {
+          // ignore
+        }
+      } catch (e) {
+        // ignore parse errors
+      }
+
       this.emit('deviceDiscovered', device);
     });
 

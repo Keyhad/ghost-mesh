@@ -16,3 +16,6 @@ export {
   type DiscoveredDevice,
   type BLEAdapterEvents,
 } from './types';
+
+export { parseManufacturerData } from './manufacturer';
+export { parseMeshPacket, MessageAssembler, type MeshPacket } from './mesh';
